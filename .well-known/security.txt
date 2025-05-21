@@ -1,0 +1,7 @@
+# security.txt for www.willsplace.co.uk
+
+Contact: mailto:will+security@willsplace.co.uk
+Expires: 2025-12-31T23:59:59Z
+Preferred-Languages: en
+Canonical: https://www.willsplace.co.uk/.well-known/security.txt
+Policy: https://www.willsplace.co.uk/security-policy.html
