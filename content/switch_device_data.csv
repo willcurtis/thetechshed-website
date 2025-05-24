@@ -1,0 +1,11 @@
+[hostname],[ip_address],[subnet_mask],[uplink_interface],[default_gateway],[admin_user],[admin_password]
+SW-Branch-01,10.0.1.2,255.255.255.0,GigabitEthernet1/0/34,10.0.1.1,admin,pass01
+SW-Branch-02,10.0.2.2,255.255.255.0,GigabitEthernet1/0/33,10.0.2.1,admin,pass02
+SW-Branch-03,10.0.3.2,255.255.255.0,GigabitEthernet1/0/22,10.0.3.1,admin,pass03
+SW-Branch-04,10.0.4.2,255.255.255.0,GigabitEthernet1/0/39,10.0.4.1,admin,pass04
+SW-Branch-05,10.0.5.2,255.255.255.0,GigabitEthernet1/0/2,10.0.5.1,admin,pass05
+SW-Branch-06,10.0.6.2,255.255.255.0,GigabitEthernet1/0/27,10.0.6.1,admin,pass06
+SW-Branch-07,10.0.7.2,255.255.255.0,GigabitEthernet1/0/27,10.0.7.1,admin,pass07
+SW-Branch-08,10.0.8.2,255.255.255.0,GigabitEthernet1/0/33,10.0.8.1,admin,pass08
+SW-Branch-09,10.0.9.2,255.255.255.0,GigabitEthernet1/0/15,10.0.9.1,admin,pass09
+SW-Branch-10,10.0.10.2,255.255.255.0,GigabitEthernet1/0/47,10.0.10.1,admin,pass10
