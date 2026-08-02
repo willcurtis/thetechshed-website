@@ -1,0 +1,27 @@
+---
+layout: base.njk
+title: Field notes
+description: Build logs, project write-ups and practical engineering notes from The Tech Shed.
+permalink: /blog/index.html
+---
+<header class="archive-header">
+  <p class="eyebrow">The notebook</p>
+  <h1>Project notes.</h1>
+  <p>Build decisions, useful details and the lessons behind recent Tech Shed projects.</p>
+</header>
+<section class="archive-list" aria-label="Blog posts">
+  {% for post in collections.posts | reverse %}
+  <article>
+    <div>
+      <p class="project-type">{{ post.data.category }}</p>
+      <h2><a href="..{{ post.url }}index.html">{{ post.data.title }}</a></h2>
+      <p>{{ post.data.description }}</p>
+    </div>
+    <div class="archive-meta">
+      <time datetime="{{ post.date | htmlDate }}">{{ post.date | readableDate }}</time>
+      <span>{{ post.data.readingTime or "4 min read" }}</span>
+      <a href="..{{ post.url }}index.html" aria-label="Read {{ post.data.title }}">Read note <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+  {% endfor %}
+</section>

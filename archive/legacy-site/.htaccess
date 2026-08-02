@@ -1,0 +1,30 @@
+Options -Indexes -MultiViews
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\.thetechshed\.dev$ [NC]
+  RewriteRule ^ https://www.thetechshed.dev%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=()"
+  Header always set X-Frame-Options "DENY"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io; style-src 'self'; img-src 'self' data:; connect-src 'self' https://plausible.io; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+</IfModule>
+
+<FilesMatch "\.(py|csv|txt)$">
+  Require all denied
+</FilesMatch>
+
+<Files "robots.txt">
+  Require all granted
+</Files>
+
+<FilesMatch "^(cisco_switch_template\.txt|switch_device_data\.csv)$">
+  Require all granted
+</FilesMatch>

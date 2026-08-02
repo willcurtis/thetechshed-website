@@ -1,0 +1,87 @@
+---
+layout: base.njk
+title:
+description: The Tech Shed is Will Curtis's home for practical networking, automation and open-source engineering projects.
+---
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Networks · automation · open source</p>
+      <h1>Welcome to <span>The Tech Shed</span></h1>
+      <p>A home for practical tools, connected technology and the lessons learned while building them.</p>
+      <div class="actions">
+        <a class="button" href="#projects">Explore recent projects</a>
+        <a class="button secondary" href="#contact">Get in touch</a>
+      </div>
+    </div>
+    <img class="hero-logo" src="./images/tts-round-outline.png" width="640" height="640" alt="The Tech Shed circular logo">
+  </div>
+</section>
+
+<section class="section section-alt" id="about">
+  <div class="container split-heading">
+    <div><p class="eyebrow">About</p><h2>Engineering grounded in experience.</h2></div>
+    <div class="section-copy">
+      <p>I’m Will, a solutions engineer with nearly two decades of experience across networking, infrastructure and connected systems.</p>
+      <p>The Tech Shed is where I turn real problems into useful software, experiment with new ideas and publish enough detail for someone else to build on the work.</p>
+      <ul class="tag-list" aria-label="Areas of interest"><li>Networking</li><li>Python</li><li>Automation</li><li>Open source</li><li>Data visualisation</li><li>Home lab</li></ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="projects">
+  <div class="container">
+    <header class="section-heading"><p class="eyebrow">Recent work</p><h2>Fresh from the workbench.</h2><p>Four current projects spanning desktop tools, live data and network testing.</p></header>
+    <div class="project-grid">
+      <article class="project-card featured">
+        <div class="project-number" aria-hidden="true">01</div>
+        <p class="project-type">Python · Desktop & CLI</p>
+        <h3>QR Code Generator</h3>
+        <p>Generate validated QR codes for links, Wi-Fi, contacts, events, SMS and more—with a desktop preview, image export and a capable command-line interface.</p>
+        <ul class="feature-list"><li>Multiple payload types</li><li>Custom colours and error correction</li><li>PNG and JPEG export</li></ul>
+        <div class="card-links"><a href="https://github.com/willcurtis/qr-generator" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/qr-code-generator/index.html">Read the note →</a></div>
+      </article>
+      <article class="project-card">
+        <div class="project-number" aria-hidden="true">02</div>
+        <p class="project-type">Python · WeatherLink</p>
+        <h3>Weather Dashboard</h3>
+        <p>A modern dashboard for Davis WeatherLink stations, bringing live observations, gauges, a wind compass and selectable history graphs into one clear interface.</p>
+        <ul class="feature-list"><li>Live conditions and 24-hour history</li><li>Metric and imperial modes</li><li>Desktop and Raspberry Pi kiosk support</li></ul>
+        <div class="card-links"><a href="https://github.com/willcurtis/weatherlink-dashboard" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/weather-dashboard/index.html">Read the note →</a></div>
+      </article>
+      <article class="project-card">
+        <div class="project-number" aria-hidden="true">03</div>
+        <p class="project-type">HTML · TfL data</p>
+        <h3>London Underground</h3>
+        <p>Live Tube and Elizabeth line status dashboards for browsers, wall displays and DAKboard—with responsive layouts and configurable widgets.</p>
+        <ul class="feature-list"><li>Official TfL service data</li><li>Full-screen and compact displays</li><li>No API key required</li></ul>
+        <div class="card-links"><a href="https://github.com/willcurtis/london-underground-dakboard" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/london-underground/index.html">Read the note →</a></div>
+      </article>
+      <article class="project-card">
+        <div class="project-number" aria-hidden="true">04</div>
+        <p class="project-type">Python · Network testing</p>
+        <h3>LogSalvo</h3>
+        <p>A cross-platform syslog traffic studio for generating, sending, receiving, parsing, filtering and exporting common log formats.</p>
+        <ul class="feature-list"><li>RFC 3164 and RFC 5424</li><li>UDP, TCP and TLS</li><li>CLI and desktop GUI</li></ul>
+        <div class="card-links"><a href="https://github.com/willcurtis/logsalvo" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/logsalvo/index.html">Read the note →</a></div>
+      </article>
+    </div>
+    <p class="all-projects"><a href="https://github.com/willcurtis?tab=repositories" target="_blank" rel="noopener noreferrer">Browse every repository on GitHub →</a></p>
+  </div>
+</section>
+
+<section class="section section-alt" id="notes">
+  <div class="container">
+    <header class="section-heading"><p class="eyebrow">Project notes</p><h2>From the notebook.</h2></header>
+    <div class="notes-grid">
+      {% for post in collections.posts | reverse | limit(3) %}
+      <article class="note-card"><p class="project-type">{{ post.data.category }}</p><h3><a href=".{{ post.url }}index.html">{{ post.data.title }}</a></h3><p>{{ post.data.description }}</p><time datetime="{{ post.date | htmlDate }}">{{ post.date | readableDate }}</time></article>
+      {% endfor %}
+    </div>
+    <a class="text-link" href="./blog/index.html">View all project notes →</a>
+  </div>
+</section>
+
+<section class="section contact" id="contact">
+  <div class="container contact-inner"><div><p class="eyebrow">Contact</p><h2>Let’s compare notes.</h2><p>Have a question, an idea or a gloriously over-engineered problem?</p></div><a class="contact-email" href="mailto:{{ site.email }}">{{ site.email }} <span aria-hidden="true">↗</span></a></div>
+</section>
