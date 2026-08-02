@@ -1,0 +1,23 @@
+---
+layout: base.njk
+---
+<article class="post">
+  <header class="post-header">
+    {% set root = page.url | relativeRoot %}
+    <a class="back-link" href="{{ root }}blog/index.html">← All project notes</a>
+    <p class="kicker">{{ category or "Field note" }}</p>
+    <h1>{{ title }}</h1>
+    <p class="post-intro">{{ description }}</p>
+    <div class="post-meta">
+      <time datetime="{{ date | htmlDate }}">{{ date | readableDate }}</time>
+      <span>{{ readingTime or "4 min read" }}</span>
+    </div>
+  </header>
+  <div class="post-body">{{ content | safe }}</div>
+</article>
+<aside class="post-cta">
+  <p class="eyebrow">Continue the conversation</p>
+  <h2>Built something similar?</h2>
+  <p>I’m always interested in practical solutions, unexpected failures and useful lessons.</p>
+  <a class="button" href="mailto:{{ site.email }}">Get in touch</a>
+</aside>
