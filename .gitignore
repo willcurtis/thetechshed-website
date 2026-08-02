@@ -7,3 +7,5 @@ __pycache__/
 *.py[cod]
 /social/
 /scripts/
+**/* 2.*
+**/* 2
