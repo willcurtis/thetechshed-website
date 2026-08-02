@@ -1,9 +1,9 @@
 ---
-title: LogSalvo turns syslog testing into a proper workspace
-description: Generating and receiving realistic syslog traffic with enough control for collectors, parsers and alert pipelines.
+title: "LogSalvo turns syslog testing into a proper workspace"
+description: "Generating and receiving realistic syslog traffic with enough control for collectors, parsers and alert pipelines."
 date: 2026-08-01
-category: LogSalvo
-readingTime: 6 min read
+category: "LogSalvo"
+readingTime: 1 min read
 ---
 
 ## Testing both ends of the pipeline
