@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Config Generator | The Tech Shed</title>
+  <meta name="description" content="Generate multiple network configuration files from a CSV dataset and text template.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/assets/css/site.css"><link rel="icon" href="/favicon.ico">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="container nav-wrap"><a class="brand" href="/"><img src="/content/tts-round-outline.png" width="48" height="48" alt=""><span>The Tech Shed</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/#projects">Projects</a><a href="/privacy.html">Privacy</a></nav></div></header>
+  <main class="page-hero reading" id="main">
+    <p class="eyebrow">Network automation</p><h1>Config Generator</h1>
+    <p class="hero-copy">Combine a UTF-8 text template with CSV data to download one configuration file per row.</p>
+    <div class="notice"><strong>Before uploading:</strong> do not include passwords, keys, personal data or other secrets. Submitted files are processed temporarily and discarded after the response.</div>
+    {% if error %}<p class="notice" role="alert">{{ error }}</p>{% endif %}
+    <form class="upload-form" method="post" enctype="multipart/form-data">
+      <div class="field"><label for="template">Configuration template</label><input id="template" type="file" name="template" accept=".txt,text/plain" required><small>UTF-8 text, maximum 1 MB. Use placeholders matching your CSV headers, such as <code>[hostname]</code>.</small></div>
+      <div class="field"><label for="csv">Device data</label><input id="csv" type="file" name="csv" accept=".csv,text/csv" required><small>UTF-8 CSV, maximum 1 MB and 500 rows.</small></div>
+      <div class="field"><label for="filename_column">Filename column</label><input id="filename_column" type="text" name="filename_column" maxlength="64" pattern="[A-Za-z0-9_-]+" placeholder="hostname" required><small>Enter the header name without square brackets.</small></div>
+      <button class="button" type="submit">Generate ZIP download</button>
+    </form>
+    <p>Need a starting point? Download the <a href="/content/cisco_switch_template.txt">example template</a> and <a href="/content/switch_device_data.csv">example CSV</a>.</p>
+  </main>
+  <footer class="site-footer"><div class="container">© <span data-current-year>2026</span> The Tech Shed</div></footer>
+  <script src="/assets/js/site.js" defer></script>
+</body>
+</html>
