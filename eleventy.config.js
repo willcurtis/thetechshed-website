@@ -1,6 +1,9 @@
 export default function (eleventyConfig) {
-  eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
-  eleventyConfig.addPassthroughCopy({ "src/images": "images" });
+  // Ignore accidental Finder/cloud-sync duplicates such as "index 2.njk".
+  eleventyConfig.ignores.add("**/* 2.*");
+  eleventyConfig.addPassthroughCopy({ "src/assets/site.css": "assets/site.css" });
+  eleventyConfig.addPassthroughCopy({ "src/assets/site.js": "assets/site.js" });
+  eleventyConfig.addPassthroughCopy({ "src/images/tts-round-outline.png": "images/tts-round-outline.png" });
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
 
   eleventyConfig.addFilter("readableDate", (date) =>
