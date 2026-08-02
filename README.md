@@ -13,6 +13,18 @@ The development server refreshes when source files change. The generated homepag
 
 ## Create a blog post
 
+### Graphical editor
+
+On macOS, double-click `tools/blog-editor/launch-blog-editor.command`, or run:
+
+```sh
+python3 tools/blog-editor/blog_editor.py
+```
+
+The branded editor generates safe metadata and filenames, estimates reading time, previews the finished Markdown and can rebuild the site after saving. It uses Python's built-in Tkinter toolkit, so it needs no extra Python packages. See [`tools/blog-editor/README.md`](tools/blog-editor/README.md) for details.
+
+### Create a post manually
+
 1. Duplicate any file in `src/posts/`.
 2. Give it a URL-friendly filename, such as `building-a-home-lab.md`.
 3. Update the metadata at the top:
