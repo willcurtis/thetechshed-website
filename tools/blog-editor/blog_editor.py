@@ -41,8 +41,10 @@ class BlogEditor(tk.Tk):
         super().__init__()
         self.title("The Tech Shed · Blog Post Editor")
         self.geometry("1120x780")
-        self.minsize(900, 680)
+        self.minsize(900, 620)
         self.configure(bg=BG)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(2, weight=1)
 
         self.current_path: Path | None = None
         self.slug_is_manual = False
@@ -86,7 +88,7 @@ class BlogEditor(tk.Tk):
 
     def _build_ui(self) -> None:
         header = ttk.Frame(self)
-        header.pack(fill="x", padx=24, pady=(20, 12))
+        header.grid(row=0, column=0, sticky="ew", padx=24, pady=(20, 12))
 
         if LOGO_PATH.exists():
             try:
@@ -111,7 +113,7 @@ class BlogEditor(tk.Tk):
         ttk.Button(header_actions, text="Save", style="Accent.TButton", command=self.save_post).pack(side="left", padx=4)
 
         metadata = ttk.Frame(self, style="Panel.TFrame", padding=16)
-        metadata.pack(fill="x", padx=24, pady=(0, 12))
+        metadata.grid(row=1, column=0, sticky="ew", padx=24, pady=(0, 12))
         metadata.columnconfigure(1, weight=2)
         metadata.columnconfigure(3, weight=1)
 
@@ -126,12 +128,12 @@ class BlogEditor(tk.Tk):
         ttk.Label(metadata, text="Reading time", style="Panel.TLabel").grid(row=3, column=2, sticky="w", padx=(0, 8), pady=(8, 0))
         ttk.Spinbox(metadata, from_=1, to=120, textvariable=self.reading_var, width=8).grid(row=3, column=3, sticky="w", pady=(8, 0))
 
-        notebook = ttk.Notebook(self)
-        notebook.pack(fill="both", expand=True, padx=24, pady=(0, 12))
-        editor_tab = ttk.Frame(notebook, style="Panel.TFrame")
-        preview_tab = ttk.Frame(notebook, style="Panel.TFrame")
-        notebook.add(editor_tab, text="Write")
-        notebook.add(preview_tab, text="Markdown preview")
+        self.notebook = ttk.Notebook(self)
+        self.notebook.grid(row=2, column=0, sticky="nsew", padx=24, pady=(0, 12))
+        editor_tab = ttk.Frame(self.notebook, style="Panel.TFrame")
+        preview_tab = ttk.Frame(self.notebook, style="Panel.TFrame")
+        self.notebook.add(editor_tab, text="Write")
+        self.notebook.add(preview_tab, text="Markdown preview")
 
         toolbar = ttk.Frame(editor_tab, style="Panel.TFrame", padding=(10, 8))
         toolbar.pack(fill="x")
@@ -148,14 +150,14 @@ class BlogEditor(tk.Tk):
         self.preview_text = tk.Text(preview_tab, wrap="word", state="disabled", bg=SURFACE_RAISED, fg=MUTED, relief="flat", padx=16, pady=14, font=("SF Mono", 11))
         self.preview_text.pack(fill="both", expand=True, padx=10, pady=10)
 
-        footer = ttk.Frame(self)
-        footer.pack(fill="x", padx=24, pady=(0, 18))
-        ttk.Label(footer, textvariable=self.status_var, style="Muted.TLabel").pack(side="left", fill="x", expand=True)
-        self.save_build_button = ttk.Button(footer, text="Save & build site", style="Accent.TButton", command=self.save_and_build)
+        self.footer = ttk.Frame(self)
+        self.footer.grid(row=3, column=0, sticky="ew", padx=24, pady=(0, 18))
+        ttk.Label(self.footer, textvariable=self.status_var, style="Muted.TLabel").pack(side="left", fill="x", expand=True)
+        self.save_build_button = ttk.Button(self.footer, text="Save & build site", style="Accent.TButton", command=self.save_and_build)
         self.save_build_button.pack(side="right", padx=(8, 0))
-        self.build_button = ttk.Button(footer, text="Build site", command=self.build_site)
+        self.build_button = ttk.Button(self.footer, text="Build site", command=self.build_site)
         self.build_button.pack(side="right")
-        self.publish_button = ttk.Button(footer, text="Commit & merge post", command=self.publish_current_post)
+        self.publish_button = ttk.Button(self.footer, text="Commit & merge post", command=self.publish_current_post)
         self.publish_button.pack(side="right", padx=(0, 8))
 
     def _field(self, parent: ttk.Frame, label: str, variable: tk.Variable, row: int, column: int, span: int = 1) -> None:
