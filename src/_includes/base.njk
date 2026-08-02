@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  {% set root = page.url | relativeRoot %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} | {% endif %}{{ site.name }}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{{ title or site.name }}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  <meta property="og:type" content="{% if layout == 'post.njk' %}article{% else %}website{% endif %}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.url }}/images/tts-round-outline.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="{{ root }}favicon.ico" sizes="any">
+  <link rel="alternate" type="application/atom+xml" title="{{ site.name }} notes" href="{{ root }}feed.xml">
+  <link rel="stylesheet" href="{{ root }}assets/site.css">
+  <script src="{{ root }}assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ root }}index.html" aria-label="The Tech Shed home">
+        <img src="{{ root }}images/tts-round-outline.png" width="48" height="48" alt="">
+        <span>The Tech Shed</span>
+      </a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="{{ root }}index.html#about">About</a>
+        <a href="{{ root }}index.html#projects">Projects</a>
+        <a href="{{ root }}blog/index.html"{% if page.url.startsWith('/blog/') %} aria-current="page"{% endif %}>Notes</a>
+        <a href="{{ root }}index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">{{ content | safe }}</main>
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div class="footer-brand"><img src="{{ root }}images/tts-round-outline.png" width="42" height="42" alt=""><span>© <span data-year></span> The Tech Shed</span></div>
+      <nav aria-label="Social links">
+        <a href="mailto:{{ site.email }}">Email</a>
+        <a href="https://github.com/willcurtis" rel="me noopener noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/willcurtis" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://techhub.social/@thetechshed" rel="me noopener noreferrer">Mastodon</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
