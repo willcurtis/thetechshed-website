@@ -18,4 +18,5 @@ The browser dashboards have no application dependencies and fetch live status di
 
 That separation keeps the simplest deployment truly static while leaving room for more advanced uses.
 
+[Open the live London Underground status demo](/demos/london-underground/index.html), or
 [Explore the London Underground DAKboard project on GitHub](https://github.com/willcurtis/london-underground-dakboard).
