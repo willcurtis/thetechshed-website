@@ -6,6 +6,7 @@ All notable user-facing changes to The Tech Shed website are documented here.
 
 ### Added
 
+- Dark mode for the hosted London Underground demo, including automatic system-theme detection and a persistent manual toggle.
 - A hosted, live London Underground status demo linked from its homepage project card and project note.
 - A new browser tools directory linked from the main navigation and homepage.
 - An IPv4 subnet calculator for CIDR ranges, subnet and wildcard masks, broadcast addresses, and usable host capacity.
