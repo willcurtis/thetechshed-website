@@ -3,7 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#eef2f7">
     <title>Live London Underground Status | The Tech Shed</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("tube-status-theme");
+        document.documentElement.dataset.theme =
+          savedTheme === "light" || savedTheme === "dark"
+            ? savedTheme
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+      } catch {
+        document.documentElement.dataset.theme =
+          matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -16,6 +31,33 @@
         --warning: #b45309;
         --bad: #b91c1c;
         --unknown: #4b5563;
+        --heading: #0019a8;
+        --pill: rgba(255, 255, 255, 0.78);
+        --reason: #293241;
+        --shadow: rgba(17, 24, 39, 0.08);
+        --error-border: #f3b6b6;
+        --error-bg: #fff1f1;
+        --error-ink: #8a1111;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #0b1220;
+        --ink: #f8fafc;
+        --muted: #b8c3d4;
+        --panel: #172033;
+        --border: #334155;
+        --good: #15803d;
+        --warning: #c2670a;
+        --bad: #c62828;
+        --unknown: #64748b;
+        --heading: #8eb4ff;
+        --pill: rgba(23, 32, 51, 0.82);
+        --reason: #d8e0eb;
+        --shadow: rgba(0, 0, 0, 0.28);
+        --error-border: #7f1d1d;
+        --error-bg: #3f171b;
+        --error-ink: #fecaca;
       }
 
       * {
@@ -55,7 +97,7 @@
 
       h1 {
         margin: 0;
-        color: #0019a8;
+        color: var(--heading);
         font-size: clamp(1.45rem, 2.25vw, 2.55rem);
         line-height: 1;
         letter-spacing: 0;
@@ -95,6 +137,17 @@
         opacity: 0.7;
       }
 
+      button.secondary {
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--ink);
+      }
+
+      button:focus-visible {
+        outline: 3px solid var(--heading);
+        outline-offset: 3px;
+      }
+
       .meta {
         display: flex;
         flex-wrap: wrap;
@@ -111,7 +164,7 @@
         min-height: 34px;
         border: 1px solid var(--border);
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.78);
+        background: var(--pill);
         padding: 6px 11px;
         color: var(--muted);
         font-size: clamp(0.76rem, 0.95vw, 0.9rem);
@@ -121,11 +174,11 @@
 
       .status-banner {
         display: none;
-        border: 1px solid #f3b6b6;
+        border: 1px solid var(--error-border);
         border-radius: 8px;
-        background: #fff1f1;
+        background: var(--error-bg);
         padding: 10px 12px;
-        color: #8a1111;
+        color: var(--error-ink);
         font-size: 0.9rem;
       }
 
@@ -159,7 +212,7 @@
         border: 1px solid var(--border);
         border-radius: 8px;
         background: var(--panel);
-        box-shadow: 0 8px 22px rgba(17, 24, 39, 0.08);
+        box-shadow: 0 8px 22px var(--shadow);
       }
 
       .line-card::before {
@@ -265,7 +318,7 @@
       .reason {
         min-width: 0;
         margin: 0;
-        color: #293241;
+        color: var(--reason);
         font-size: clamp(0.78rem, 0.98vw, 0.92rem);
         line-height: 1.32;
         overflow: hidden;
@@ -295,7 +348,7 @@
       }
 
       footer a {
-        color: #0019a8;
+        color: var(--heading);
         font-weight: 750;
       }
 
@@ -366,6 +419,7 @@
           </p>
         </div>
         <div class="actions">
+          <button class="secondary" id="theme-toggle" type="button">Dark mode</button>
           <button id="refresh" type="button">Refresh live data</button>
         </div>
       </header>
@@ -485,8 +539,29 @@
 
       const lineContainer = document.querySelector("#lines");
       const refreshButton = document.querySelector("#refresh");
+      const themeButton = document.querySelector("#theme-toggle");
       const lastUpdated = document.querySelector("#last-updated");
       const errorBanner = document.querySelector("#error");
+      const themeColour = document.querySelector('meta[name="theme-color"]');
+
+      function applyTheme(theme, persist = false) {
+        const dark = theme === "dark";
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        themeButton.textContent = dark ? "Light mode" : "Dark mode";
+        themeButton.setAttribute(
+          "aria-label",
+          `Switch to ${dark ? "light" : "dark"} mode`,
+        );
+        themeColour.content = dark ? "#0b1220" : "#eef2f7";
+
+        if (persist) {
+          try {
+            localStorage.setItem("tube-status-theme", dark ? "dark" : "light");
+          } catch {
+            // The theme still works when browser storage is unavailable.
+          }
+        }
+      }
 
       function statusClass(severity) {
         if (severity >= 10) return "good";
@@ -594,6 +669,12 @@
         }
       }
 
+      applyTheme(document.documentElement.dataset.theme);
+      themeButton.addEventListener("click", () => {
+        const nextTheme =
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(nextTheme, true);
+      });
       refreshButton.addEventListener("click", loadStatuses);
       render();
       loadStatuses();
