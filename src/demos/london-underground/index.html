@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live London Underground Status | The Tech Shed</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #eef2f7;
+        --ink: #111827;
+        --muted: #5d6675;
+        --panel: #ffffff;
+        --border: #d8dee8;
+        --good: #0b7f3a;
+        --warning: #b45309;
+        --bad: #b91c1c;
+        --unknown: #4b5563;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .app {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        height: 100dvh;
+        padding: clamp(10px, 1.4vw, 20px);
+        gap: clamp(8px, 0.95vw, 14px);
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        min-height: 0;
+      }
+
+      h1 {
+        margin: 0;
+        color: #0019a8;
+        font-size: clamp(1.45rem, 2.25vw, 2.55rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        margin: 6px 0 0;
+        max-width: 880px;
+        color: var(--muted);
+        font-size: clamp(0.82rem, 1.1vw, 1rem);
+        line-height: 1.35;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      button {
+        min-height: 40px;
+        border: 0;
+        border-radius: 8px;
+        padding: 0 14px;
+        background: #0019a8;
+        color: #ffffff;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 750;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        align-content: flex-start;
+        min-width: 0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        min-height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.78);
+        padding: 6px 11px;
+        color: var(--muted);
+        font-size: clamp(0.76rem, 0.95vw, 0.9rem);
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      .status-banner {
+        display: none;
+        border: 1px solid #f3b6b6;
+        border-radius: 8px;
+        background: #fff1f1;
+        padding: 10px 12px;
+        color: #8a1111;
+        font-size: 0.9rem;
+      }
+
+      .status-banner.visible {
+        display: block;
+      }
+
+      .content {
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        align-content: stretch;
+        min-height: 0;
+        gap: 10px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr));
+        grid-auto-rows: minmax(132px, 1fr);
+        gap: clamp(8px, 1vw, 14px);
+        min-height: 0;
+        overflow: auto;
+        overscroll-behavior: contain;
+        padding-right: 2px;
+      }
+
+      .line-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 132px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 8px 22px rgba(17, 24, 39, 0.08);
+      }
+
+      .line-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: clamp(8px, 0.9vw, 12px);
+        background: var(--line-colour);
+      }
+
+      .line-bakerloo { --line-colour: #B36305; }
+      .line-central { --line-colour: #E32017; }
+      .line-circle { --line-colour: #FFD300; }
+      .line-district { --line-colour: #00782A; }
+      .line-elizabeth { --line-colour: #6950A1; }
+      .line-hammersmith-city { --line-colour: #F3A9BB; }
+      .line-jubilee { --line-colour: #A0A5A9; }
+      .line-metropolitan { --line-colour: #9B0056; }
+      .line-northern { --line-colour: #000000; }
+      .line-piccadilly { --line-colour: #003688; }
+      .line-victoria { --line-colour: #0098D4; }
+      .line-waterloo-city { --line-colour: #95CDBA; }
+
+      .card-inner {
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        gap: clamp(7px, 0.9vw, 11px);
+        height: 100%;
+        padding:
+          clamp(12px, 1.2vw, 17px)
+          clamp(12px, 1.2vw, 17px)
+          clamp(12px, 1.2vw, 17px)
+          clamp(22px, 2vw, 28px);
+      }
+
+      .line-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .line-name {
+        min-width: 0;
+        margin: 0;
+        font-size: clamp(1.02rem, 1.45vw, 1.38rem);
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .line-swatch {
+        flex: 0 0 auto;
+        width: clamp(34px, 3.6vw, 50px);
+        height: 8px;
+        margin-top: 4px;
+        border-radius: 999px;
+        background: var(--line-colour);
+      }
+
+      .zone {
+        color: var(--muted);
+        font-size: clamp(0.72rem, 0.95vw, 0.88rem);
+        font-weight: 650;
+      }
+
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        align-items: center;
+        min-width: 0;
+      }
+
+      .status {
+        max-width: 100%;
+        border-radius: 999px;
+        padding: 6px 9px;
+        color: #ffffff;
+        background: var(--unknown);
+        font-size: clamp(0.72rem, 0.9vw, 0.84rem);
+        font-weight: 800;
+        line-height: 1.1;
+      }
+
+      .status.good {
+        background: var(--good);
+      }
+
+      .status.warning {
+        background: var(--warning);
+      }
+
+      .status.bad {
+        background: var(--bad);
+      }
+
+      .severity {
+        color: var(--muted);
+        font-size: clamp(0.7rem, 0.88vw, 0.82rem);
+      }
+
+      .reason {
+        min-width: 0;
+        margin: 0;
+        color: #293241;
+        font-size: clamp(0.78rem, 0.98vw, 0.92rem);
+        line-height: 1.32;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+      }
+
+      .route {
+        color: var(--muted);
+        font-size: clamp(0.7rem, 0.88vw, 0.82rem);
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .loading .line-card {
+        opacity: 0.72;
+      }
+
+      footer {
+        min-height: 0;
+        color: var(--muted);
+        font-size: clamp(0.7rem, 0.9vw, 0.84rem);
+        line-height: 1.3;
+      }
+
+      footer a {
+        color: #0019a8;
+        font-weight: 750;
+      }
+
+      @media (min-width: 1500px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        body {
+          overflow: auto;
+        }
+
+        .app {
+          min-height: 100dvh;
+          height: auto;
+          grid-template-rows: auto auto auto;
+        }
+
+        .content {
+          grid-template-rows: auto auto auto;
+        }
+
+        header {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .actions {
+          justify-content: flex-start;
+        }
+
+        .grid {
+          overflow: visible;
+          grid-auto-rows: auto;
+        }
+
+        .line-card {
+          min-height: 0;
+        }
+      }
+
+      @media (max-height: 640px) and (min-width: 761px) {
+        .lede,
+        footer {
+          display: none;
+        }
+
+        .grid {
+          grid-auto-rows: minmax(116px, 1fr);
+        }
+
+        .reason {
+          -webkit-line-clamp: 2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <div>
+          <h1>London Underground Status</h1>
+          <p class="lede">
+            Live TfL service status for Tube lines serving London fare zones 1-6,
+            colourised with each line's official Transport for London colour.
+          </p>
+        </div>
+        <div class="actions">
+          <button id="refresh" type="button">Refresh live data</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="meta" aria-label="Dashboard metadata">
+          <span class="pill" id="last-updated">Waiting for live data...</span>
+          <span class="pill">Source: TfL Unified API</span>
+          <span class="pill">Zones: 1-6</span>
+        </section>
+
+        <div class="status-banner" id="error" role="alert"></div>
+        <section class="grid loading" id="lines" aria-live="polite"></section>
+      </section>
+
+      <footer>
+        Statuses refresh from TfL's Tube and Elizabeth line status endpoints.
+        Some lines operate beyond zone 6; this dashboard focuses on TfL rail
+        services serving zones 1-6 and reports current line-level status.
+        <a href="../../index.html#projects">Return to The Tech Shed</a> ·
+        <a href="https://github.com/willcurtis/london-underground-dakboard" rel="noopener noreferrer">View source on GitHub</a>
+      </footer>
+    </main>
+
+    <script>
+      const TFL_STATUS_URLS = [
+        "https://api.tfl.gov.uk/Line/Mode/tube/Status",
+        "https://api.tfl.gov.uk/Line/Mode/elizabeth-line/Status",
+      ];
+
+      const LINES = [
+        {
+          id: "bakerloo",
+          name: "Bakerloo",
+          colour: "#B36305",
+          zones: "Zones 1-5",
+          route: "Harrow & Wealdstone - Elephant & Castle",
+        },
+        {
+          id: "central",
+          name: "Central",
+          colour: "#E32017",
+          zones: "Zones 1-6",
+          route: "West Ruislip / Ealing Broadway - Epping / Hainault",
+        },
+        {
+          id: "circle",
+          name: "Circle",
+          colour: "#FFD300",
+          zones: "Zones 1-2",
+          route: "Hammersmith - Edgware Road - Tower Hill - Hammersmith",
+        },
+        {
+          id: "district",
+          name: "District",
+          colour: "#00782A",
+          zones: "Zones 1-6",
+          route: "Upminster / Edgware Road - Richmond / Wimbledon / Ealing Broadway",
+        },
+        {
+          id: "elizabeth",
+          name: "Elizabeth line",
+          colour: "#6950A1",
+          zones: "Zones 1-6+",
+          route: "Reading / Heathrow - Shenfield / Abbey Wood",
+        },
+        {
+          id: "hammersmith-city",
+          name: "Hammersmith & City",
+          colour: "#F3A9BB",
+          zones: "Zones 1-3",
+          route: "Hammersmith - Barking",
+        },
+        {
+          id: "jubilee",
+          name: "Jubilee",
+          colour: "#A0A5A9",
+          zones: "Zones 1-6",
+          route: "Stanmore - Stratford",
+        },
+        {
+          id: "metropolitan",
+          name: "Metropolitan",
+          colour: "#9B0056",
+          zones: "Zones 1-6+",
+          route: "Aldgate - Amersham / Chesham / Uxbridge / Watford",
+        },
+        {
+          id: "northern",
+          name: "Northern",
+          colour: "#000000",
+          zones: "Zones 1-5",
+          route: "High Barnet / Edgware - Battersea Power Station / Morden",
+        },
+        {
+          id: "piccadilly",
+          name: "Piccadilly",
+          colour: "#003688",
+          zones: "Zones 1-6",
+          route: "Cockfosters - Heathrow / Uxbridge",
+        },
+        {
+          id: "victoria",
+          name: "Victoria",
+          colour: "#0098D4",
+          zones: "Zones 1-3",
+          route: "Walthamstow Central - Brixton",
+        },
+        {
+          id: "waterloo-city",
+          name: "Waterloo & City",
+          colour: "#95CDBA",
+          zones: "Zone 1",
+          route: "Waterloo - Bank",
+        },
+      ];
+
+      const lineContainer = document.querySelector("#lines");
+      const refreshButton = document.querySelector("#refresh");
+      const lastUpdated = document.querySelector("#last-updated");
+      const errorBanner = document.querySelector("#error");
+
+      function statusClass(severity) {
+        if (severity >= 10) return "good";
+        if (severity >= 6) return "warning";
+        return "bad";
+      }
+
+      function sanitize(text) {
+        const div = document.createElement("div");
+        div.textContent = text ?? "";
+        return div.innerHTML;
+      }
+
+      async function fetchStatuses() {
+        const results = await Promise.allSettled(
+          TFL_STATUS_URLS.map(async (url) => {
+            const response = await fetch(url, {
+              headers: { Accept: "application/json" },
+              signal: AbortSignal.timeout(10_000),
+            });
+
+            if (!response.ok) {
+              throw new Error(`TfL returned HTTP ${response.status}`);
+            }
+
+            return response.json();
+          }),
+        );
+        const data = results
+          .filter((result) => result.status === "fulfilled")
+          .flatMap((result) => result.value);
+
+        if (data.length === 0) {
+          throw new Error("All TfL status requests failed");
+        }
+
+        return data;
+      }
+
+      function render(linesById = new Map(), loading = true) {
+        lineContainer.innerHTML = LINES.map((line) => {
+          const live = linesById.get(line.id);
+          const lineStatus = live?.lineStatuses?.[0];
+          const statusText =
+            lineStatus?.statusSeverityDescription ??
+            (loading ? "Loading status" : "Unknown");
+          const severity = lineStatus?.statusSeverity;
+          const reason =
+            lineStatus?.reason ||
+            (statusText === "Good Service"
+              ? "No current disruptions reported by TfL."
+              : "TfL has not provided additional details.");
+          const statusTone =
+            typeof severity === "number" ? statusClass(severity) : "";
+
+          return `
+            <article class="line-card line-${line.id}">
+              <div class="card-inner">
+                <div>
+                  <div class="line-head">
+                    <h2 class="line-name">${sanitize(line.name)}</h2>
+                    <span class="line-swatch" aria-hidden="true"></span>
+                  </div>
+                  <div class="zone">${sanitize(line.zones)}</div>
+                </div>
+                <div class="status-row">
+                  <span class="status ${statusTone}">${sanitize(statusText)}</span>
+                  ${
+                    typeof severity === "number"
+                      ? `<span class="severity">TfL severity ${severity}/10</span>`
+                      : ""
+                  }
+                </div>
+                <p class="reason">${sanitize(reason)}</p>
+                <div class="route">${sanitize(line.route)}</div>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      async function loadStatuses() {
+        refreshButton.disabled = true;
+        refreshButton.textContent = "Refreshing...";
+        lineContainer.classList.add("loading");
+        errorBanner.classList.remove("visible");
+
+        try {
+          const data = await fetchStatuses();
+          const linesById = new Map(data.map((line) => [line.id, line]));
+          render(linesById, false);
+          lastUpdated.textContent = `Updated ${new Intl.DateTimeFormat("en-GB", {
+            dateStyle: "medium",
+            timeStyle: "medium",
+          }).format(new Date())}`;
+        } catch (error) {
+          errorBanner.textContent =
+            `Live TfL data could not be loaded. ${error.message}`;
+          errorBanner.classList.add("visible");
+          lastUpdated.textContent = "Live data unavailable";
+        } finally {
+          refreshButton.disabled = false;
+          refreshButton.textContent = "Refresh live data";
+          lineContainer.classList.remove("loading");
+        }
+      }
+
+      refreshButton.addEventListener("click", loadStatuses);
+      render();
+      loadStatuses();
+      setInterval(loadStatuses, 60_000);
+    </script>
+  </body>
+</html>
