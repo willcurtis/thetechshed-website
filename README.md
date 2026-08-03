@@ -52,3 +52,16 @@ npm run build
 ```
 
 Publish the contents of `_site`. Configure the host to serve `_site/404.html` for missing pages.
+
+## Production security headers
+
+The build copies `src/.htaccess` into `_site` for Apache-compatible hosting. It sets the canonical HTTPS hostname, disables directory listings and adds the site's security headers.
+
+For Nginx, include `deploy/nginx-security-headers.conf` inside the HTTPS `server` block, test the configuration and reload Nginx:
+
+```sh
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+The Nginx server should redirect both HTTP and `www.thetechshed.dev` to `https://thetechshed.dev`. The two-year HSTS policy covers subdomains, so confirm every subdomain supports HTTPS before applying it. HSTS preloading is deliberately not enabled because submitting the domain to browser preload lists is a separate, long-term operational decision.
