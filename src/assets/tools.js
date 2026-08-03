@@ -166,4 +166,137 @@
     });
     updateSecurity();
   }
+
+  const vlanTool = document.querySelector("[data-vlan-tool]");
+  if (vlanTool) {
+    const form = vlanTool.querySelector("[data-vlan-form]");
+    const rows = vlanTool.querySelector("[data-vlan-rows]");
+    const error = vlanTool.querySelector("[data-vlan-error]");
+    const output = vlanTool.querySelector("[data-plan-body]");
+    const title = vlanTool.querySelector("[data-plan-title]");
+    const summary = vlanTool.querySelector("[data-plan-summary]");
+    let plan = [];
+
+    const parseCidr = (value) => {
+      const pieces = value.trim().split("/");
+      const ip = pieces.length === 2 ? parseIp(pieces[0]) : null;
+      const prefix = Number(pieces[1]);
+      if (ip === null || !Number.isInteger(prefix) || prefix < 0 || prefix > 30) throw new Error("Enter a valid parent network in IPv4 CIDR notation, such as 10.20.0.0/20.");
+      const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+      return { network: (ip & mask) >>> 0, prefix, size: 2 ** (32 - prefix) };
+    };
+
+    const collectRequirements = () => {
+      const requirements = [...rows.querySelectorAll("[data-vlan-row]")].map((row, index) => {
+        const name = row.querySelector('[name="vlanName"]').value.trim();
+        const vlan = Number(row.querySelector('[name="vlanId"]').value);
+        const hosts = Number(row.querySelector('[name="hosts"]').value);
+        if (!name) throw new Error(`Enter a name for requirement ${index + 1}.`);
+        if (!Number.isInteger(vlan) || vlan < 1 || vlan > 4094) throw new Error(`VLAN ID for ${name} must be a whole number from 1 to 4094.`);
+        if (!Number.isInteger(hosts) || hosts < 1 || hosts > 1073741822) throw new Error(`Required hosts for ${name} must be a positive whole number.`);
+        const blockSize = 2 ** Math.ceil(Math.log2(hosts + 2));
+        return { name, vlan, hosts, blockSize, prefix: 32 - Math.log2(blockSize) };
+      });
+      if (new Set(requirements.map((item) => item.vlan)).size !== requirements.length) throw new Error("Each VLAN ID must be unique.");
+      return requirements.sort((a, b) => b.blockSize - a.blockSize || a.vlan - b.vlan);
+    };
+
+    const buildPlan = () => {
+      const parent = parseCidr(form.elements.parent.value);
+      const requirements = collectRequirements();
+      const parentEnd = parent.network + parent.size - 1;
+      let cursor = parent.network;
+      plan = requirements.map((item) => {
+        const network = Math.ceil(cursor / item.blockSize) * item.blockSize;
+        const broadcast = network + item.blockSize - 1;
+        if (broadcast > parentEnd) throw new Error(`The requirements do not fit inside ${toIp(parent.network)}/${parent.prefix}. Use a larger parent network or reduce the host counts.`);
+        const mask = item.prefix === 0 ? 0 : (0xffffffff << (32 - item.prefix)) >>> 0;
+        cursor = broadcast + 1;
+        return { ...item, network, broadcast, mask, first: network + 1, last: broadcast - 1, capacity: item.blockSize - 2 };
+      });
+      title.textContent = `${toIp(parent.network)}/${parent.prefix}`;
+      output.replaceChildren(...plan.map((item) => {
+        const row = document.createElement("tr");
+        [item.vlan, item.name, `${toIp(item.network)}/${item.prefix}`, toIp(item.mask), `${toIp(item.first)} – ${toIp(item.last)}`, item.capacity.toLocaleString("en-GB")].forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.append(cell);
+        });
+        return row;
+      }));
+      const used = plan.reduce((total, item) => total + item.blockSize, 0);
+      summary.textContent = `${plan.length} VLAN${plan.length === 1 ? "" : "s"} allocated · ${used.toLocaleString("en-GB")} of ${parent.size.toLocaleString("en-GB")} addresses reserved · ${(parent.size - used).toLocaleString("en-GB")} addresses remain.`;
+    };
+
+    const planCsv = () => ["VLAN,Name,Subnet,Mask,First usable,Last usable,Broadcast,Capacity", ...plan.map((item) => [item.vlan, `"${item.name.replace(/"/g, '""')}"`, `${toIp(item.network)}/${item.prefix}`, toIp(item.mask), toIp(item.first), toIp(item.last), toIp(item.broadcast), item.capacity].join(","))].join("\n");
+    vlanTool.querySelector("[data-add-vlan]").addEventListener("click", () => rows.append(vlanTool.querySelector("[data-vlan-template]").content.cloneNode(true)));
+    rows.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-remove-vlan]");
+      if (!button) return;
+      if (rows.querySelectorAll("[data-vlan-row]").length === 1) { error.textContent = "The plan needs at least one VLAN requirement."; error.hidden = false; return; }
+      button.closest("[data-vlan-row]").remove();
+    });
+    form.addEventListener("submit", (event) => { event.preventDefault(); try { buildPlan(); error.hidden = true; } catch (problem) { error.textContent = problem.message; error.hidden = false; } });
+    vlanTool.querySelector("[data-copy-plan]").addEventListener("click", async (event) => {
+      try { await navigator.clipboard.writeText(planCsv()); event.currentTarget.textContent = "Copied"; window.setTimeout(() => { event.currentTarget.textContent = "Copy CSV"; }, 1600); } catch { event.currentTarget.textContent = "Copy unavailable"; }
+    });
+    vlanTool.querySelector("[data-download-plan]").addEventListener("click", () => {
+      const link = document.createElement("a");
+      const objectUrl = URL.createObjectURL(new Blob([planCsv()], { type: "text/csv;charset=utf-8" }));
+      link.download = "vlan-subnet-plan.csv"; link.href = objectUrl; link.click(); URL.revokeObjectURL(objectUrl);
+    });
+    buildPlan();
+  }
+
+  const dnsTool = document.querySelector("[data-dns-tool]");
+  if (dnsTool) {
+    const form = dnsTool.querySelector("[data-dns-form]");
+    const type = form.elements.type;
+    const fields = dnsTool.querySelector("[data-dns-fields]");
+    const error = dnsTool.querySelector("[data-dns-error]");
+    const list = dnsTool.querySelector("[data-dns-records]");
+    const empty = dnsTool.querySelector("[data-dns-empty]");
+    let records = [];
+    const fieldMarkup = {
+      A: '<div class="field-group"><label for="dns-value">IPv4 address</label><input id="dns-value" name="value" value="192.0.2.10" placeholder="192.0.2.10"></div>',
+      AAAA: '<div class="field-group"><label for="dns-value">IPv6 address</label><input id="dns-value" name="value" value="2001:db8::10" placeholder="2001:db8::10"></div>',
+      CNAME: '<div class="field-group"><label for="dns-target">Canonical target</label><input id="dns-target" name="target" value="app.example.com." placeholder="target.example.com."><p class="field-hint">A trailing dot marks a fully qualified domain name.</p></div>',
+      MX: '<div class="dns-field-pair"><div class="field-group"><label for="dns-priority">Priority</label><input id="dns-priority" name="priority" type="number" min="0" max="65535" value="10"></div><div class="field-group"><label for="dns-target">Mail server</label><input id="dns-target" name="target" value="mail.example.com." placeholder="mail.example.com."></div></div>',
+      TXT: '<div class="field-group"><label for="dns-value">Text value</label><textarea id="dns-value" name="value" rows="4" placeholder="v=spf1 include:example.com ~all">v=spf1 include:example.com ~all</textarea><p class="field-hint">Quotes and backslashes are escaped in the generated record.</p></div>',
+      SRV: '<div class="dns-field-pair four"><div class="field-group"><label for="dns-priority">Priority</label><input id="dns-priority" name="priority" type="number" min="0" max="65535" value="10"></div><div class="field-group"><label for="dns-weight">Weight</label><input id="dns-weight" name="weight" type="number" min="0" max="65535" value="5"></div><div class="field-group"><label for="dns-port">Port</label><input id="dns-port" name="port" type="number" min="1" max="65535" value="443"></div><div class="field-group"><label for="dns-target">Target</label><input id="dns-target" name="target" value="service.example.com." placeholder="service.example.com."></div></div>'
+    };
+    const validName = (value) => value === "@" || /^(?:\*\.)?(?:_?[a-z0-9](?:[a-z0-9_-]{0,61}[a-z0-9])?\.?)+$/i.test(value);
+    const validTarget = (value) => /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.?)+$/i.test(value);
+    const validIpv6 = (value) => /^[0-9a-f:]+$/i.test(value) && value.includes(":") && (value.match(/::/g) || []).length <= 1 && value.split(":").filter(Boolean).every((part) => part.length <= 4) && (value.includes("::") ? value.split(":").filter(Boolean).length < 8 : value.split(":").length === 8);
+    const numberField = (name, label, min = 0, max = 65535) => { const value = Number(form.elements[name].value); if (!Number.isInteger(value) || value < min || value > max) throw new Error(`${label} must be a whole number from ${min} to ${max}.`); return value; };
+    const renderFields = () => { fields.innerHTML = fieldMarkup[type.value]; };
+    const renderRecords = () => {
+      empty.hidden = records.length > 0;
+      list.replaceChildren(...records.map((record, index) => {
+        const item = document.createElement("li"); item.className = "dns-record";
+        const content = document.createElement("div"); const code = document.createElement("code"); const note = document.createElement("p");
+        code.textContent = record.line; note.textContent = record.note; content.append(code, note);
+        const remove = document.createElement("button"); remove.type = "button"; remove.dataset.removeDns = index; remove.setAttribute("aria-label", `Remove ${record.type} record`); remove.textContent = "×";
+        item.append(content, remove); return item;
+      }));
+    };
+    const buildRecord = () => {
+      const recordType = type.value; const name = form.elements.name.value.trim(); const ttl = numberField("ttl", "Time to live", 0, 2147483647);
+      if (!validName(name)) throw new Error("Enter a valid record name, host label or @ for the zone apex.");
+      let data = ""; let note = "";
+      if (recordType === "A") { const value = form.elements.value.value.trim(); if (parseIp(value) === null) throw new Error("Enter a valid IPv4 address."); data = value; note = "Maps a name to an IPv4 address."; }
+      if (recordType === "AAAA") { const value = form.elements.value.value.trim(); if (!validIpv6(value)) throw new Error("Enter a valid IPv6 address."); data = value; note = "Maps a name to an IPv6 address."; }
+      if (recordType === "CNAME") { const target = form.elements.target.value.trim(); if (!validTarget(target)) throw new Error("Enter a valid canonical target name."); data = target; note = "Aliases this name to the canonical target."; }
+      if (recordType === "MX") { const priority = numberField("priority", "Priority"); const target = form.elements.target.value.trim(); if (!validTarget(target)) throw new Error("Enter a valid mail server name."); data = `${priority} ${target}`; note = "Routes mail to the target; lower priority values are preferred."; }
+      if (recordType === "TXT") { const value = form.elements.value.value.trim(); if (!value) throw new Error("Enter a text value."); data = `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`; note = "Publishes text such as ownership, SPF or verification information."; }
+      if (recordType === "SRV") { const priority = numberField("priority", "Priority"); const weight = numberField("weight", "Weight"); const port = numberField("port", "Port", 1); const target = form.elements.target.value.trim(); if (!validTarget(target)) throw new Error("Enter a valid service target name."); data = `${priority} ${weight} ${port} ${target}`; note = "Advertises the location, port and selection order for a service."; }
+      return { type: recordType, line: `${name} ${ttl} IN ${recordType} ${data}`, note };
+    };
+    type.addEventListener("change", renderFields);
+    form.addEventListener("submit", (event) => { event.preventDefault(); try { records.push(buildRecord()); renderRecords(); error.hidden = true; } catch (problem) { error.textContent = problem.message; error.hidden = false; } });
+    list.addEventListener("click", (event) => { const button = event.target.closest("[data-remove-dns]"); if (!button) return; records.splice(Number(button.dataset.removeDns), 1); renderRecords(); });
+    dnsTool.querySelector("[data-copy-dns]").addEventListener("click", async (event) => { if (!records.length) return; try { await navigator.clipboard.writeText(records.map((record) => record.line).join("\n")); event.currentTarget.textContent = "Copied"; window.setTimeout(() => { event.currentTarget.textContent = "Copy all"; }, 1600); } catch { event.currentTarget.textContent = "Copy unavailable"; } });
+    dnsTool.querySelector("[data-clear-dns]").addEventListener("click", () => { records = []; renderRecords(); });
+    renderFields(); renderRecords();
+  }
 })();
