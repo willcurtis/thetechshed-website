@@ -1,0 +1,32 @@
+---
+layout: base.njk
+title: VLAN and subnet planner
+description: Allocate right-sized IPv4 subnets and VLANs from a parent network using VLSM.
+permalink: /tools/vlan-subnet-planner/index.html
+toolScripts: true
+---
+<header class="tool-page-header container">
+  <a class="back-link" href="../index.html">← All tools</a>
+  <p class="eyebrow">VLSM · Network design</p>
+  <h1>VLAN &amp; subnet planner.</h1>
+  <p>Describe your VLANs and host requirements, then build a right-sized addressing plan without overlaps.</p>
+</header>
+<section class="planner-workspace container" data-vlan-tool>
+  <form class="tool-panel planner-form" data-vlan-form novalidate>
+    <div class="field-group"><label for="parent-network">Parent IPv4 network</label><input id="parent-network" name="parent" type="text" value="10.20.0.0/20" placeholder="10.20.0.0/20" autocomplete="off"><p class="field-hint">The planner allocates largest requirements first using Variable Length Subnet Masking.</p></div>
+    <div class="requirements-heading"><div><p class="eyebrow">Requirements</p><h2>VLANs to allocate</h2></div><button class="copy-button" type="button" data-add-vlan>+ Add VLAN</button></div>
+    <div class="vlan-requirements" data-vlan-rows>
+      <div class="vlan-row" data-vlan-row><div class="field-group"><label>Name</label><input name="vlanName" value="Users" aria-label="VLAN name"></div><div class="field-group"><label>VLAN ID</label><input name="vlanId" type="number" min="1" max="4094" value="10" aria-label="VLAN ID"></div><div class="field-group"><label>Hosts</label><input name="hosts" type="number" min="1" value="120" aria-label="Required hosts"></div><button class="remove-row" type="button" data-remove-vlan aria-label="Remove VLAN">×</button></div>
+      <div class="vlan-row" data-vlan-row><div class="field-group"><label>Name</label><input name="vlanName" value="Voice" aria-label="VLAN name"></div><div class="field-group"><label>VLAN ID</label><input name="vlanId" type="number" min="1" max="4094" value="20" aria-label="VLAN ID"></div><div class="field-group"><label>Hosts</label><input name="hosts" type="number" min="1" value="60" aria-label="Required hosts"></div><button class="remove-row" type="button" data-remove-vlan aria-label="Remove VLAN">×</button></div>
+      <div class="vlan-row" data-vlan-row><div class="field-group"><label>Name</label><input name="vlanName" value="Infrastructure" aria-label="VLAN name"></div><div class="field-group"><label>VLAN ID</label><input name="vlanId" type="number" min="1" max="4094" value="30" aria-label="VLAN ID"></div><div class="field-group"><label>Hosts</label><input name="hosts" type="number" min="1" value="24" aria-label="Required hosts"></div><button class="remove-row" type="button" data-remove-vlan aria-label="Remove VLAN">×</button></div>
+    </div>
+    <p class="form-error" data-vlan-error role="alert" hidden></p>
+    <button class="button" type="submit">Build addressing plan</button>
+  </form>
+  <div class="tool-results planner-results" aria-live="polite">
+    <div class="results-heading"><div><p class="eyebrow">Addressing plan</p><h2 data-plan-title>10.20.0.0/20</h2></div><div class="result-actions"><button class="copy-button" type="button" data-copy-plan>Copy CSV</button><button class="copy-button" type="button" data-download-plan>Download CSV</button></div></div>
+    <div class="table-wrap"><table class="plan-table"><thead><tr><th>VLAN</th><th>Name</th><th>Subnet</th><th>Mask</th><th>Usable range</th><th>Capacity</th></tr></thead><tbody data-plan-body></tbody></table></div>
+    <p class="result-note" data-plan-summary></p>
+  </div>
+</section>
+<template data-vlan-template><div class="vlan-row" data-vlan-row><div class="field-group"><label>Name</label><input name="vlanName" placeholder="Guest Wi-Fi" aria-label="VLAN name"></div><div class="field-group"><label>VLAN ID</label><input name="vlanId" type="number" min="1" max="4094" aria-label="VLAN ID"></div><div class="field-group"><label>Hosts</label><input name="hosts" type="number" min="1" value="30" aria-label="Required hosts"></div><button class="remove-row" type="button" data-remove-vlan aria-label="Remove VLAN">×</button></div></template>

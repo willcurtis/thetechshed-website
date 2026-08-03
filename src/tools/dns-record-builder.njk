@@ -1,0 +1,29 @@
+---
+layout: base.njk
+title: DNS record builder
+description: Build and validate common DNS records with copy-ready zone-file output.
+permalink: /tools/dns-record-builder/index.html
+toolScripts: true
+---
+<header class="tool-page-header container">
+  <a class="back-link" href="../index.html">← All tools</a>
+  <p class="eyebrow">DNS · Zone records</p>
+  <h1>DNS record builder.</h1>
+  <p>Create common Domain Name System records and understand the values before adding them to a zone.</p>
+</header>
+<section class="tool-workspace container" data-dns-tool>
+  <form class="tool-panel" data-dns-form novalidate>
+    <div class="field-group"><label for="dns-type">Record type</label><select id="dns-type" name="type"><option>A</option><option>AAAA</option><option>CNAME</option><option>MX</option><option>TXT</option><option>SRV</option></select></div>
+    <div class="field-group"><label for="dns-name">Name</label><input id="dns-name" name="name" value="www" placeholder="www or @" autocomplete="off"><p class="field-hint">Use <code>@</code> for the zone apex or enter a host label such as <code>www</code>.</p></div>
+    <div class="field-group"><label for="dns-ttl">Time to live (seconds)</label><input id="dns-ttl" name="ttl" type="number" min="0" value="3600"></div>
+    <div data-dns-fields></div>
+    <p class="form-error" data-dns-error role="alert" hidden></p>
+    <button class="button" type="submit">Add record</button>
+  </form>
+  <div class="tool-results dns-results" aria-live="polite">
+    <div class="results-heading"><div><p class="eyebrow">Zone-file output</p><h2>Built records</h2></div><div class="result-actions"><button class="copy-button" type="button" data-copy-dns>Copy all</button><button class="copy-button" type="button" data-clear-dns>Clear</button></div></div>
+    <div class="dns-empty" data-dns-empty><p>Add a record to generate validated zone-file syntax.</p></div>
+    <ol class="dns-record-list" data-dns-records></ol>
+    <div class="dns-guidance"><strong>Before publishing:</strong> confirm provider-specific formatting, use fully qualified target names where required, and check that referenced hosts exist.</div>
+  </div>
+</section>
