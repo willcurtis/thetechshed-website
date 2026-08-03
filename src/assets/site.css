@@ -143,7 +143,7 @@ p { max-width: 68ch; }
 .result-note { margin: 1rem 0 0; color: var(--muted); font-size: .8rem; }
 .qr-results { display: grid; place-items: center; text-align: center; }
 .qr-placeholder { color: var(--muted); }
-.qr-placeholder span { display: grid; width: 10rem; height: 10rem; margin: auto; place-items: center; border: 1px dashed var(--border); border-radius: .5rem; color: var(--border); font-size: 2.5rem; font-weight: 900; }
+.qr-placeholder span { display: grid; width: 10rem; height: 10rem; margin: auto; place-items: center; border: 1px dashed var(--border); border-radius: .5rem; color: var(--muted); font-size: 2.5rem; font-weight: 900; }
 .qr-results [data-qr-output] { width: min(100%, 29rem); }
 .qr-results canvas { width: min(100%, 22rem); margin: 0 auto 1.5rem; border: .75rem solid #fff; border-radius: .35rem; background: #fff; }
 .qr-results h2 { margin-bottom: .5rem; overflow-wrap: anywhere; }

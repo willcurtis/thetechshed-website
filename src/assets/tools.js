@@ -228,7 +228,12 @@
       summary.textContent = `${plan.length} VLAN${plan.length === 1 ? "" : "s"} allocated · ${used.toLocaleString("en-GB")} of ${parent.size.toLocaleString("en-GB")} addresses reserved · ${(parent.size - used).toLocaleString("en-GB")} addresses remain.`;
     };
 
-    const planCsv = () => ["VLAN,Name,Subnet,Mask,First usable,Last usable,Broadcast,Capacity", ...plan.map((item) => [item.vlan, `"${item.name.replace(/"/g, '""')}"`, `${toIp(item.network)}/${item.prefix}`, toIp(item.mask), toIp(item.first), toIp(item.last), toIp(item.broadcast), item.capacity].join(","))].join("\n");
+    const safeCsvCell = (value) => {
+      const text = String(value);
+      const protectedValue = /^\s*[=+\-@]/.test(text) ? `'${text}` : text;
+      return `"${protectedValue.replace(/"/g, '""')}"`;
+    };
+    const planCsv = () => ["VLAN,Name,Subnet,Mask,First usable,Last usable,Broadcast,Capacity", ...plan.map((item) => [item.vlan, safeCsvCell(item.name), `${toIp(item.network)}/${item.prefix}`, toIp(item.mask), toIp(item.first), toIp(item.last), toIp(item.broadcast), item.capacity].join(","))].join("\n");
     vlanTool.querySelector("[data-add-vlan]").addEventListener("click", () => rows.append(vlanTool.querySelector("[data-vlan-template]").content.cloneNode(true)));
     rows.addEventListener("click", (event) => {
       const button = event.target.closest("[data-remove-vlan]");

@@ -1,8 +1,8 @@
 {
   "name": "The Tech Shed",
-  "url": "https://www.thetechshed.dev",
+  "url": "https://thetechshed.dev",
   "description": "Practical networking, automation and open-source engineering projects from The Tech Shed.",
   "email": "hello@thetechshed.dev",
   "author": "Will Curtis",
-  "assetVersion": "2026-08-03-tools-v2"
+  "assetVersion": "2026-08-03-security-v1"
 }
