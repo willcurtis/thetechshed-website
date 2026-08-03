@@ -17,8 +17,9 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="{{ root }}favicon.ico" sizes="any">
   <link rel="alternate" type="application/atom+xml" title="{{ site.name }} notes" href="{{ root }}feed.xml">
-  <link rel="stylesheet" href="{{ root }}assets/site.css">
-  <script src="{{ root }}assets/site.js" defer></script>
+  <link rel="stylesheet" href="{{ root }}assets/site.css?v={{ site.assetVersion }}">
+  <script src="{{ root }}assets/site.js?v={{ site.assetVersion }}" defer></script>
+  {% if qrLibrary %}<script src="{{ root }}assets/vendor/qrcode.js?v={{ site.assetVersion }}" defer></script>{% endif %}{% if toolScripts %}<script src="{{ root }}assets/tools.js?v={{ site.assetVersion }}" defer></script>{% endif %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -32,6 +33,7 @@
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <a href="{{ root }}index.html#about">About</a>
         <a href="{{ root }}index.html#projects">Projects</a>
+        <a href="{{ root }}tools/index.html"{% if page.url.startsWith('/tools/') %} aria-current="page"{% endif %}>Tools</a>
         <a href="{{ root }}blog/index.html"{% if page.url.startsWith('/blog/') %} aria-current="page"{% endif %}>Notes</a>
         <a href="{{ root }}index.html#contact">Contact</a>
       </nav>

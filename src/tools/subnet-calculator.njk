@@ -1,0 +1,42 @@
+---
+layout: base.njk
+title: IPv4 subnet calculator
+description: Calculate IPv4 network ranges, masks, broadcast addresses and usable hosts from CIDR notation.
+permalink: /tools/subnet-calculator/index.html
+toolScripts: true
+---
+<header class="tool-page-header container">
+  <a class="back-link" href="../index.html">← All tools</a>
+  <p class="eyebrow">IPv4 · Networking</p>
+  <h1>Subnet calculator.</h1>
+  <p>Enter an IPv4 address and CIDR prefix to see the complete subnet at a glance.</p>
+</header>
+<section class="tool-workspace container" data-subnet-tool>
+  <form class="tool-panel" data-subnet-form novalidate>
+    <div class="field-group">
+      <label for="ip-address">IPv4 address</label>
+      <input id="ip-address" name="ip" type="text" inputmode="decimal" autocomplete="off" value="192.168.1.10" placeholder="192.168.1.10" aria-describedby="subnet-hint subnet-error">
+      <p class="field-hint" id="subnet-hint">You can include the prefix here, for example <code>10.20.30.40/24</code>.</p>
+    </div>
+    <div class="field-group">
+      <label for="cidr-prefix">CIDR prefix</label>
+      <div class="prefix-input"><span aria-hidden="true">/</span><input id="cidr-prefix" name="prefix" type="number" inputmode="numeric" min="0" max="32" value="24"></div>
+    </div>
+    <p class="form-error" id="subnet-error" data-subnet-error role="alert" hidden></p>
+    <button class="button" type="submit">Calculate subnet</button>
+  </form>
+  <div class="tool-results" aria-live="polite" aria-atomic="true">
+    <div class="results-heading"><div><p class="eyebrow">Calculated range</p><h2 data-result="cidr">192.168.1.0/24</h2></div><button class="copy-button" type="button" data-copy-results>Copy results</button></div>
+    <dl class="result-grid">
+      <div><dt>Network address</dt><dd data-result="network">192.168.1.0</dd></div>
+      <div><dt>Broadcast address</dt><dd data-result="broadcast">192.168.1.255</dd></div>
+      <div><dt>First usable address</dt><dd data-result="first">192.168.1.1</dd></div>
+      <div><dt>Last usable address</dt><dd data-result="last">192.168.1.254</dd></div>
+      <div><dt>Subnet mask</dt><dd data-result="mask">255.255.255.0</dd></div>
+      <div><dt>Wildcard mask</dt><dd data-result="wildcard">0.0.0.255</dd></div>
+      <div><dt>Total addresses</dt><dd data-result="total">256</dd></div>
+      <div><dt>Usable hosts</dt><dd data-result="usable">254</dd></div>
+    </dl>
+    <p class="result-note" data-result="note">Excludes the network and broadcast addresses.</p>
+  </div>
+</section>
