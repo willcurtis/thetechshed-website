@@ -18,6 +18,7 @@ All notable user-facing changes to The Tech Shed website are documented here.
 
 ### Fixed
 
+- Made the shared asset cache key content-derived so the Enyaq Pulse project card, and future interface updates, cannot be rendered with stale CSS or JavaScript after deployment.
 - Allowed the hosted demo's hashed inline assets and TfL status requests through the production Content Security Policy without enabling unrestricted inline code.
 - Balanced the tools directory into a two-column desktop layout with a compact, responsive mobile stack.
 - Added asset versioning so browsers and content delivery networks do not reuse stale CSS or JavaScript after a deployment.
