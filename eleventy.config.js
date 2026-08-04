@@ -1,3 +1,19 @@
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+
+const versionedAssets = [
+  "src/assets/site.css",
+  "src/assets/site.js",
+  "src/assets/tools.js",
+  "node_modules/qrcode-generator/dist/qrcode.js"
+];
+
+function getAssetVersion() {
+  const hash = createHash("sha256");
+  for (const asset of versionedAssets) hash.update(readFileSync(new URL(asset, import.meta.url)));
+  return hash.digest("hex").slice(0, 12);
+}
+
 export default function (eleventyConfig) {
   // Ignore accidental Finder/cloud-sync duplicates such as "index 2.njk".
   eleventyConfig.ignores.add("**/* 2.*");
@@ -11,6 +27,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/images/posts": "images/posts" });
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
   eleventyConfig.addPassthroughCopy({ "src/.htaccess": ".htaccess" });
+  eleventyConfig.addGlobalData("assetVersion", () => getAssetVersion());
 
   eleventyConfig.addFilter("readableDate", (date) =>
     new Intl.DateTimeFormat("en-GB", {
