@@ -6,6 +6,7 @@ All notable user-facing changes to The Tech Shed website are documented here.
 
 ### Added
 
+- A long-form Enyaq Pulse build story covering the responsive dashboard, local MyŠkoda collector, SQLite history, resilience and security model, with desktop and mobile screenshots and a coming-soon status.
 - Dark mode for the hosted London Underground demo, including automatic system-theme detection and a persistent manual toggle.
 - A hosted, live London Underground status demo linked from its homepage project card and project note.
 - A new browser tools directory linked from the main navigation and homepage.

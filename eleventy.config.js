@@ -8,6 +8,7 @@ export default function (eleventyConfig) {
     "node_modules/qrcode-generator/dist/qrcode.js": "assets/vendor/qrcode.js"
   });
   eleventyConfig.addPassthroughCopy({ "src/images/tts-round-outline.png": "images/tts-round-outline.png" });
+  eleventyConfig.addPassthroughCopy({ "src/images/posts": "images/posts" });
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
   eleventyConfig.addPassthroughCopy({ "src/.htaccess": ".htaccess" });
 
