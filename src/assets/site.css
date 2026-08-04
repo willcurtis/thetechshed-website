@@ -204,6 +204,18 @@ p { max-width: 68ch; }
 .post-body { width: min(100%, var(--reading)); margin: auto; padding: 4rem 0 7rem; font-size: 1.08rem; }
 .post-body h2 { margin: 3rem 0 1rem; font-size: clamp(1.8rem, 4vw, 2.8rem); }
 .post-body blockquote { margin: 2.5rem 0; padding: .5rem 0 .5rem 1.5rem; border-left: .25rem solid var(--accent); color: var(--muted); font-size: 1.2rem; }
+.post-body code { color: var(--accent); }
+.post-body pre { padding: 1.25rem; overflow-x: auto; border: 1px solid var(--border); border-radius: .5rem; background: #070b09; color: var(--text); font: .9rem/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.post-body pre code { color: inherit; }
+.post-status { margin: 0 0 3rem; padding: 1.25rem 1.4rem; border: 1px solid var(--accent); border-radius: .5rem; background: var(--accent-soft); }
+.post-status p { margin: 0; }
+.post-status p + p { margin-top: .45rem; color: var(--muted); font-size: .95rem; }
+.post-status strong { color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.post-figure { margin: 3rem 0; }
+.post-figure--wide { width: min(calc(100vw - 2rem), 68rem); margin-left: 50%; transform: translateX(-50%); }
+.post-figure--portrait { width: min(100%, 28rem); margin-inline: auto; }
+.post-figure img { width: 100%; border: 1px solid var(--border); border-radius: .6rem; background: var(--surface); box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 28%); }
+.post-figure figcaption { max-width: 68ch; margin: .85rem auto 0; color: var(--muted); font-size: .82rem; line-height: 1.55; text-align: center; }
 .post-cta { padding: 4rem max(1rem, calc((100% - var(--max)) / 2)); border-top: 1px solid var(--border); background: var(--surface); }
 .post-cta p:not(.eyebrow) { color: var(--muted); }
 .not-found { min-height: 65vh; }
