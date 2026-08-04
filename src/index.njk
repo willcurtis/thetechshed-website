@@ -31,10 +31,25 @@ description: The Tech Shed is Will Curtis's home for practical networking, autom
 
 <section class="section" id="projects">
   <div class="container">
-    <header class="section-heading"><p class="eyebrow">Recent work</p><h2>Fresh from the workbench.</h2><p>Four current projects spanning desktop tools, live data and network testing.</p></header>
+    <header class="section-heading"><p class="eyebrow">Recent work</p><h2>Fresh from the workbench.</h2><p>Five current projects spanning connected vehicles, desktop tools, live data and network testing.</p></header>
     <div class="project-grid">
-      <article class="project-card featured">
-        <div class="project-number" aria-hidden="true">01</div>
+      <article class="project-card project-card--wide featured">
+        <div class="project-card-content">
+          <div class="project-card-topline">
+            <div class="project-card-labels"><p class="project-type">TypeScript · Python · Connected EV</p><span class="status-chip">Coming soon</span></div>
+            <span class="project-card-index" aria-hidden="true">01</span>
+          </div>
+          <h3>Enyaq Pulse</h3>
+          <p>A private, read-only dashboard that turns MyŠkoda vehicle data into a clear view of battery, charging, efficiency, journey history and vehicle status.</p>
+          <ul class="feature-list"><li>Live and demonstration modes</li><li>Local SQLite history and resilient caching</li><li>Responsive desktop and mobile dashboard</li></ul>
+          <div class="card-links"><a href="./blog/enyaq-pulse/index.html">Read the full build story →</a></div>
+        </div>
+        <a class="project-card-visual" href="./blog/enyaq-pulse/index.html" aria-label="Read the Enyaq Pulse build story">
+          <img src="./images/posts/enyaq-pulse/dashboard-overview.jpg" width="1280" height="720" alt="Enyaq Pulse dashboard showing battery range and active charging information" loading="lazy" decoding="async">
+        </a>
+      </article>
+      <article class="project-card">
+        <div class="project-number" aria-hidden="true">02</div>
         <p class="project-type">Python · Desktop & CLI</p>
         <h3>QR Code Generator</h3>
         <p>Generate validated QR codes for links, Wi-Fi, contacts, events, SMS and more—with a desktop preview, image export and a capable command-line interface.</p>
@@ -42,7 +57,7 @@ description: The Tech Shed is Will Curtis's home for practical networking, autom
         <div class="card-links"><a href="https://github.com/willcurtis/qr-generator" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/qr-code-generator/index.html">Read the note →</a></div>
       </article>
       <article class="project-card">
-        <div class="project-number" aria-hidden="true">02</div>
+        <div class="project-number" aria-hidden="true">03</div>
         <p class="project-type">Python · WeatherLink</p>
         <h3>Weather Dashboard</h3>
         <p>A modern dashboard for Davis WeatherLink stations, bringing live observations, gauges, a wind compass and selectable history graphs into one clear interface.</p>
@@ -50,7 +65,7 @@ description: The Tech Shed is Will Curtis's home for practical networking, autom
         <div class="card-links"><a href="https://github.com/willcurtis/weatherlink-dashboard" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/weather-dashboard/index.html">Read the note →</a></div>
       </article>
       <article class="project-card">
-        <div class="project-number" aria-hidden="true">03</div>
+        <div class="project-number" aria-hidden="true">04</div>
         <p class="project-type">HTML · TfL data</p>
         <h3>London Underground</h3>
         <p>Live Tube and Elizabeth line status dashboards for browsers, wall displays and DAKboard—with responsive layouts and configurable widgets.</p>
@@ -58,7 +73,7 @@ description: The Tech Shed is Will Curtis's home for practical networking, autom
         <div class="card-links"><a href="./demos/london-underground/index.html">Open live demo →</a><a href="https://github.com/willcurtis/london-underground-dakboard" target="_blank" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">↗</span></a><a href="./blog/london-underground/index.html">Read the note →</a></div>
       </article>
       <article class="project-card">
-        <div class="project-number" aria-hidden="true">04</div>
+        <div class="project-number" aria-hidden="true">05</div>
         <p class="project-type">Python · Network testing</p>
         <h3>LogSalvo</h3>
         <p>A cross-platform syslog traffic studio for generating, sending, receiving, parsing, filtering and exporting common log formats.</p>
@@ -88,7 +103,11 @@ description: The Tech Shed is Will Curtis's home for practical networking, autom
     <header class="section-heading"><p class="eyebrow">Project notes</p><h2>From the notebook.</h2></header>
     <div class="notes-grid">
       {% for post in collections.posts | reverse | limit(3) %}
-      <article class="note-card"><p class="project-type">{{ post.data.category }}</p><h3><a href=".{{ post.url }}index.html">{{ post.data.title }}</a></h3><p>{{ post.data.description }}</p><time datetime="{{ post.date | htmlDate }}">{{ post.date | readableDate }}</time></article>
+      <article class="note-card{% if post.data.previewImage %} note-card--visual{% endif %}">
+        {% if post.data.previewImage %}<a class="note-card-image" href=".{{ post.url }}index.html" aria-label="Read {{ post.data.title }}"><img src=".{{ post.data.previewImage }}" width="1280" height="720" alt="{{ post.data.previewImageAlt }}" loading="lazy" decoding="async"></a>{% endif %}
+        <div class="card-kicker-row"><p class="project-type">{{ post.data.category }}</p>{% if post.data.projectStatus %}<span class="status-chip">{{ post.data.projectStatus }}</span>{% endif %}</div>
+        <h3><a href=".{{ post.url }}index.html">{{ post.data.title }}</a></h3><p>{{ post.data.description }}</p><time datetime="{{ post.date | htmlDate }}">{{ post.date | readableDate }}</time>
+      </article>
       {% endfor %}
     </div>
     <a class="text-link" href="./blog/index.html">View all project notes →</a>

@@ -4,6 +4,9 @@ description: How a responsive dashboard, a local Python collector and resilient 
 date: 2026-08-04
 category: Enyaq Pulse
 readingTime: 12 min read
+previewImage: /images/posts/enyaq-pulse/dashboard-overview.jpg
+previewImageAlt: Enyaq Pulse dashboard showing battery range and active charging information
+projectStatus: Coming soon
 ---
 
 <aside class="post-status" aria-label="Project status">
