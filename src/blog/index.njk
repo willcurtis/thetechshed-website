@@ -13,7 +13,8 @@ permalink: /blog/index.html
   {% for post in collections.posts | reverse %}
   <article>
     <div>
-      <p class="project-type">{{ post.data.category }}</p>
+      {% if post.data.previewImage %}<a class="archive-preview-image" href="..{{ post.url }}index.html" aria-label="Read {{ post.data.title }}"><img src="..{{ post.data.previewImage }}" width="1280" height="720" alt="{{ post.data.previewImageAlt }}" loading="lazy" decoding="async"></a>{% endif %}
+      <div class="card-kicker-row"><p class="project-type">{{ post.data.category }}</p>{% if post.data.projectStatus %}<span class="status-chip">{{ post.data.projectStatus }}</span>{% endif %}</div>
       <h2><a href="..{{ post.url }}index.html">{{ post.data.title }}</a></h2>
       <p>{{ post.data.description }}</p>
     </div>
