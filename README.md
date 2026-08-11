@@ -53,6 +53,14 @@ npm run build
 
 Publish the contents of `_site`. Configure the host to serve `_site/404.html` for missing pages.
 
+## GitHub Pages deployment
+
+Pushes to `main` automatically run `.github/workflows/deploy-pages.yml`. The workflow installs the locked npm dependencies, builds the Eleventy site and publishes `_site` to GitHub Pages. It can also be started manually from the repository's Actions tab.
+
+GitHub Pages must use **GitHub Actions** as its publishing source in **Settings → Pages**. Configure and verify the custom domain in those settings before changing public DNS.
+
+GitHub Pages does not process `.htaccess` or the Nginx configuration in `deploy/`. If the site moves from the existing webserver, equivalent custom response headers must be provided by a compatible reverse proxy or CDN.
+
 ## Production security headers
 
 The build copies `src/.htaccess` into `_site` for Apache-compatible hosting. It sets the canonical HTTPS hostname, disables directory listings and adds the site's security headers.
