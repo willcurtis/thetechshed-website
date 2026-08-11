@@ -6,6 +6,8 @@ All notable user-facing changes to The Tech Shed website are documented here.
 
 ### Added
 
+- A dedicated LogSalvo for macOS showcase with fresh native SwiftUI screenshots, product details, development status, security model and the new Traffic Pulse branding.
+- A direct LogSalvo link in the main site navigation.
 - A long-form Enyaq Pulse build story covering the responsive dashboard, local MyŠkoda collector, SQLite history, resilience and security model, with desktop and mobile screenshots and a coming-soon status.
 - An Enyaq Pulse lead project card plus screenshot and status previews on the homepage and project-notes listing.
 - Dark mode for the hosted London Underground demo, including automatic system-theme detection and a persistent manual toggle.

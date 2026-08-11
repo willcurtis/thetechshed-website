@@ -35,6 +35,7 @@
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <a href="{{ root }}index.html#about">About</a>
         <a href="{{ root }}index.html#projects">Projects</a>
+        <a href="{{ root }}projects/logsalvo-swift/index.html"{% if page.url == '/projects/logsalvo-swift/' %} aria-current="page"{% endif %}>LogSalvo</a>
         <a href="{{ root }}tools/index.html"{% if page.url.startsWith('/tools/') %} aria-current="page"{% endif %}>Tools</a>
         <a href="{{ root }}blog/index.html"{% if page.url.startsWith('/blog/') %} aria-current="page"{% endif %}>Notes</a>
         <a href="{{ root }}index.html#contact">Contact</a>
