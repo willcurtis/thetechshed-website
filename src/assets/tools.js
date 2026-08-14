@@ -270,8 +270,17 @@
       TXT: '<div class="field-group"><label for="dns-value">Text value</label><textarea id="dns-value" name="value" rows="4" placeholder="v=spf1 include:example.com ~all">v=spf1 include:example.com ~all</textarea><p class="field-hint">Quotes and backslashes are escaped in the generated record.</p></div>',
       SRV: '<div class="dns-field-pair four"><div class="field-group"><label for="dns-priority">Priority</label><input id="dns-priority" name="priority" type="number" min="0" max="65535" value="10"></div><div class="field-group"><label for="dns-weight">Weight</label><input id="dns-weight" name="weight" type="number" min="0" max="65535" value="5"></div><div class="field-group"><label for="dns-port">Port</label><input id="dns-port" name="port" type="number" min="1" max="65535" value="443"></div><div class="field-group"><label for="dns-target">Target</label><input id="dns-target" name="target" value="service.example.com." placeholder="service.example.com."></div></div>'
     };
-    const validName = (value) => value === "@" || /^(?:\*\.)?(?:_?[a-z0-9](?:[a-z0-9_-]{0,61}[a-z0-9])?\.?)+$/i.test(value);
-    const validTarget = (value) => /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.?)+$/i.test(value);
+    const validDnsLabel = (label, allowUnderscore) => {
+      const normalized = allowUnderscore && label.startsWith("_") ? label.slice(1) : label;
+      const allowedCharacters = allowUnderscore ? /^[a-z0-9_-]+$/i : /^[a-z0-9-]+$/i;
+      return normalized.length > 0 && normalized.length <= 63 && /^[a-z0-9]$/i.test(normalized[0]) && /^[a-z0-9]$/i.test(normalized.at(-1)) && allowedCharacters.test(normalized);
+    };
+    const validDnsLabels = (value, allowUnderscore = false) => {
+      const withoutTrailingDot = value.endsWith(".") ? value.slice(0, -1) : value;
+      return withoutTrailingDot.length > 0 && withoutTrailingDot.length <= 253 && withoutTrailingDot.split(".").every((label) => validDnsLabel(label, allowUnderscore));
+    };
+    const validName = (value) => value === "@" || validDnsLabels(value.startsWith("*.") ? value.slice(2) : value, true);
+    const validTarget = (value) => validDnsLabels(value);
     const validIpv6 = (value) => /^[0-9a-f:]+$/i.test(value) && value.includes(":") && (value.match(/::/g) || []).length <= 1 && value.split(":").filter(Boolean).every((part) => part.length <= 4) && (value.includes("::") ? value.split(":").filter(Boolean).length < 8 : value.split(":").length === 8);
     const numberField = (name, label, min = 0, max = 65535) => { const value = Number(form.elements[name].value); if (!Number.isInteger(value) || value < min || value > max) throw new Error(`${label} must be a whole number from ${min} to ${max}.`); return value; };
     const renderFields = () => { fields.innerHTML = fieldMarkup[type.value]; };
