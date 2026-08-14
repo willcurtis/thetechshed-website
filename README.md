@@ -61,6 +61,17 @@ GitHub Pages must use **GitHub Actions** as its publishing source in **Settings 
 
 GitHub Pages does not process `.htaccess` or the Nginx configuration in `deploy/`. If the site moves from the existing webserver, equivalent custom response headers must be provided by a compatible reverse proxy or CDN.
 
+## Automated maintenance
+
+Dependabot checks npm packages and GitHub Actions weekly. The **Build and link check** workflow runs on pull requests, pushes to `main`, every Monday at 06:17 UTC, and on demand. It verifies that the production build succeeds and that generated internal links and assets resolve.
+
+Run the same validation locally with:
+
+```sh
+npm run build
+npm run check:links
+```
+
 ## Production security headers
 
 The build copies `src/.htaccess` into `_site` for Apache-compatible hosting. It sets the canonical HTTPS hostname, disables directory listings and adds the site's security headers.
