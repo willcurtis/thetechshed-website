@@ -1,0 +1,43 @@
+---
+layout: base.njk
+title: DNS lookup
+description: Query DNS records through Cloudflare's 1.1.1.1 resolver with readable, dig-style results.
+permalink: /tools/dns-lookup/index.html
+toolScripts: true
+---
+<header class="tool-page-header container">
+  <a class="back-link" href="../index.html">← All tools</a>
+  <p class="eyebrow">DNS · 1.1.1.1 resolver</p>
+  <h1>DNS lookup.</h1>
+  <p>Query public DNS records and inspect the response, TTL values and DNSSEC status in a readable, dig-style view.</p>
+</header>
+<section class="tool-workspace container dns-lookup-workspace" data-dns-lookup-tool data-api-endpoint="https://the-tech-shed-dns-lookup.will-4c9.workers.dev/lookup">
+  <form class="tool-panel" data-dns-lookup-form novalidate>
+    <div class="field-group">
+      <label for="lookup-name">Domain name or IP address</label>
+      <input id="lookup-name" name="name" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" value="thetechshed.dev" placeholder="example.com" aria-describedby="lookup-hint lookup-error">
+      <p class="field-hint" id="lookup-hint">For reverse DNS, choose PTR and enter an IPv4 or IPv6 address.</p>
+    </div>
+    <div class="field-group">
+      <label for="lookup-type">Record type</label>
+      <select id="lookup-type" name="type">
+        <option>A</option><option>AAAA</option><option>CNAME</option><option>MX</option><option>TXT</option><option>NS</option><option>SOA</option><option>SRV</option><option>CAA</option><option>PTR</option><option>DS</option><option>DNSKEY</option><option>HTTPS</option>
+      </select>
+    </div>
+    <p class="privacy-note"><strong>Resolver:</strong> Queries pass through The Tech Shed’s Cloudflare Worker to Cloudflare’s 1.1.1.1 DNS-over-HTTPS service. This tool does not alter DNS records.</p>
+    <p class="form-error" id="lookup-error" data-dns-lookup-error role="alert" hidden></p>
+    <button class="button" type="submit" data-dns-lookup-submit>Run lookup</button>
+  </form>
+  <div class="tool-results dns-lookup-results" aria-live="polite" aria-atomic="false">
+    <div class="results-heading"><div><p class="eyebrow">DNS response</p><h2 data-dns-lookup-title>Ready to query</h2></div><button class="copy-button" type="button" data-copy-dns-lookup hidden>Copy results</button></div>
+    <dl class="result-grid dns-summary-grid">
+      <div><dt>Status</dt><dd data-dns-summary="status">Waiting</dd></div>
+      <div><dt>DNSSEC</dt><dd data-dns-summary="dnssec">—</dd></div>
+      <div><dt>Resolver</dt><dd>Cloudflare 1.1.1.1</dd></div>
+      <div><dt>Response time</dt><dd data-dns-summary="duration">—</dd></div>
+    </dl>
+    <div class="dns-lookup-empty" data-dns-lookup-empty><p>Enter a name and record type to inspect its public DNS response.</p></div>
+    <div data-dns-lookup-output hidden></div>
+    <p class="result-attribution">Recursive lookup provided by <a href="https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/" rel="noopener noreferrer">Cloudflare 1.1.1.1</a>.</p>
+  </div>
+</section>

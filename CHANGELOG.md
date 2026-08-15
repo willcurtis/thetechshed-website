@@ -18,6 +18,7 @@ All notable user-facing changes to The Tech Shed website are documented here.
 - A VLSM-based VLAN and subnet planner with overlap-free allocation, capacity summaries, and CSV export.
 - A DNS record builder for validated A, AAAA, CNAME, MX, TXT, and SRV zone records.
 - A MAC address and OUI lookup on the homepage and tools directory, backed by a restricted Cloudflare Worker and the MACVendors API.
+- A dig-style DNS lookup for common record types, reverse DNS, TTL and DNSSEC status through a dedicated Cloudflare Worker and the 1.1.1.1 resolver.
 
 ### Fixed
 
