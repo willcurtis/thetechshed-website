@@ -70,7 +70,28 @@ Run the same validation locally with:
 ```sh
 npm run build
 npm run check:links
+npm test
 ```
+
+## MAC address lookup Worker
+
+The MAC address lookup page remains part of the static GitHub Pages build. Its cross-origin requests go through the small Cloudflare Worker in `workers/mac-lookup`, because the MACVendors API does not allow direct browser requests. The Worker validates and normalises input, restricts browser access to the production site, caches successful upstream responses and maps upstream failures to safe JSON responses. No MACVendors credential is required or stored.
+
+The Worker uses Cloudflare's `the-tech-shed-mac-lookup.will-4c9.workers.dev` address, so the website's existing domain and DNS remain independent of Cloudflare. Authenticate Wrangler and deploy it before publishing the page:
+
+```sh
+npx wrangler login
+npm run deploy:mac-lookup
+```
+
+Test the deployed endpoint from the production origin:
+
+```sh
+curl -H 'Origin: https://thetechshed.dev' \
+  'https://the-tech-shed-mac-lookup.will-4c9.workers.dev/lookup?mac=44:38:39:FF:EF:57'
+```
+
+The Worker intentionally rejects requests from other browser origins. Apply a Cloudflare rate-limiting rule to `/lookup` if public traffic approaches the MACVendors API allowance.
 
 ## Production security headers
 
