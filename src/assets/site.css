@@ -157,6 +157,8 @@ p { max-width: 68ch; }
 .result-grid dt { color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .result-grid dd { margin: .25rem 0 0; overflow-wrap: anywhere; color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(.9rem, 2vw, 1.08rem); }
 .result-note { margin: 1rem 0 0; color: var(--muted); font-size: .8rem; }
+.result-attribution { margin: 1rem 0 0; color: var(--muted); font-size: .75rem; }
+.mac-results [data-mac-vendor] { overflow-wrap: anywhere; }
 .qr-results { display: grid; place-items: center; text-align: center; }
 .qr-placeholder { color: var(--muted); }
 .qr-placeholder span { display: grid; width: 10rem; height: 10rem; margin: auto; place-items: center; border: 1px dashed var(--border); border-radius: .5rem; color: var(--muted); font-size: 2.5rem; font-weight: 900; }

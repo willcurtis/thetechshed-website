@@ -8,10 +8,13 @@
     "dev": "eleventy --serve",
     "build": "node .eleventy/clean.mjs && eleventy",
     "check:links": "node .eleventy/check-internal-links.mjs",
+    "test": "node --test workers/mac-lookup/test/*.test.js",
+    "deploy:mac-lookup": "wrangler deploy --config workers/mac-lookup/wrangler.jsonc",
     "debug": "DEBUG=Eleventy* eleventy"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.2"
+    "@11ty/eleventy": "^3.1.2",
+    "wrangler": "^4.123.0"
   },
   "overrides": {
     "brace-expansion": "^5.0.9",

@@ -313,4 +313,86 @@
     dnsTool.querySelector("[data-clear-dns]").addEventListener("click", () => { records = []; renderRecords(); });
     renderFields(); renderRecords();
   }
+
+  const macTool = document.querySelector("[data-mac-tool]");
+  if (macTool) {
+    const form = macTool.querySelector("[data-mac-form]");
+    const error = macTool.querySelector("[data-mac-error]");
+    const submit = macTool.querySelector("[data-mac-submit]");
+    const vendor = macTool.querySelector("[data-mac-vendor]");
+    const address = macTool.querySelector("[data-mac-address]");
+    const status = macTool.querySelector("[data-mac-status]");
+    const note = macTool.querySelector("[data-mac-note]");
+
+    const normalizeMac = (value) => {
+      const clean = value.trim().toUpperCase().replace(/[\s:./-]/g, "");
+      if (!/^(?:[0-9A-F]{6}|[0-9A-F]{12})$/.test(clean)) throw new Error("Enter exactly 6 or 12 hexadecimal characters.");
+      return clean.match(/.{2}/g).join(":");
+    };
+
+    const localClassification = (normalised) => {
+      const firstOctet = Number.parseInt(normalised.slice(0, 2), 16);
+      if (normalised === "FF:FF:FF:FF:FF:FF") return { status: "Broadcast", note: "The broadcast address does not belong to a hardware vendor." };
+      if ((firstOctet & 1) === 1) return { status: "Multicast", note: "Multicast addresses do not identify an individual hardware vendor." };
+      if ((firstOctet & 2) === 2) return { status: "Locally administered", note: "This address is locally administered or randomised, so its prefix is not a globally registered vendor identifier." };
+      return null;
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      error.hidden = true;
+      let normalised;
+      try {
+        normalised = normalizeMac(form.elements.mac.value);
+      } catch (problem) {
+        error.textContent = problem.message;
+        error.hidden = false;
+        form.elements.mac.focus();
+        return;
+      }
+
+      form.elements.mac.value = normalised;
+      address.textContent = normalised;
+      const classification = localClassification(normalised);
+      if (classification) {
+        vendor.textContent = "Not applicable";
+        status.textContent = classification.status;
+        note.textContent = classification.note;
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = "Looking up…";
+      vendor.textContent = "Searching…";
+      status.textContent = "In progress";
+      note.textContent = "Contacting the vendor database.";
+      try {
+        const response = await fetch(`${macTool.dataset.apiEndpoint}?mac=${encodeURIComponent(normalised)}`, { headers: { Accept: "application/json" } });
+        const result = await response.json().catch(() => null);
+        if (!result || typeof result.status !== "string") throw new Error("The lookup service returned an unexpected response.");
+        if (response.ok && result.status === "found") {
+          vendor.textContent = result.vendor;
+          status.textContent = "Vendor found";
+          note.textContent = "The vendor is derived from the registered MAC address prefix.";
+        } else if (response.status === 404 && result.status === "not_found") {
+          vendor.textContent = "Not found";
+          status.textContent = "No registration found";
+          note.textContent = "MACVendors has no registered vendor for this address prefix.";
+        } else if (response.status === 429) {
+          throw new Error("The lookup service is busy. Please wait a moment and try again.");
+        } else {
+          throw new Error(result.message || "The vendor lookup could not be completed.");
+        }
+      } catch (problem) {
+        vendor.textContent = "Lookup unavailable";
+        status.textContent = "Error";
+        note.textContent = "No vendor result was returned.";
+        error.textContent = problem instanceof TypeError ? "The lookup service could not be reached. Please try again shortly." : problem.message;
+        error.hidden = false;
+      } finally {
+        submit.disabled = false;
+        submit.textContent = "Look up vendor";
+      }
+    });
+  }
 })();

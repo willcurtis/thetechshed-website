@@ -17,6 +17,7 @@ All notable user-facing changes to The Tech Shed website are documented here.
 - A privacy-friendly Wi-Fi QR generator with WPA, WEP, open and hidden-network support plus PNG downloads.
 - A VLSM-based VLAN and subnet planner with overlap-free allocation, capacity summaries, and CSV export.
 - A DNS record builder for validated A, AAAA, CNAME, MX, TXT, and SRV zone records.
+- A MAC address and OUI lookup on the homepage and tools directory, backed by a restricted Cloudflare Worker and the MACVendors API.
 
 ### Fixed
 
