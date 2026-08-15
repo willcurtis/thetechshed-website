@@ -93,6 +93,18 @@ curl -H 'Origin: https://thetechshed.dev' \
 
 The Worker intentionally rejects requests from other browser origins. Apply a Cloudflare rate-limiting rule to `/lookup` if public traffic approaches the MACVendors API allowance.
 
+## DNS lookup Worker
+
+The DNS lookup page calls the Worker in `workers/dns-lookup`, which validates each request and sends a recursive DNS-over-HTTPS query to Cloudflare's 1.1.1.1 resolver. It normalises the upstream response into a stable site-owned contract, restricts browser access to the production origin and returns cache headers based on DNS TTL values.
+
+Deploy the Worker to `the-tech-shed-dns-lookup.will-4c9.workers.dev` with:
+
+```sh
+npm run deploy:dns-lookup
+```
+
+The tool is intentionally a recursive, dig-style lookup. It does not support arbitrary resolvers, zone transfers or iterative `+trace` queries.
+
 ## Production security headers
 
 The build copies `src/.htaccess` into `_site` for Apache-compatible hosting. It sets the canonical HTTPS hostname, disables directory listings and adds the site's security headers.

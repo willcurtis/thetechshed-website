@@ -395,4 +395,86 @@
       }
     });
   }
+
+  const dnsLookupTool = document.querySelector("[data-dns-lookup-tool]");
+  if (dnsLookupTool) {
+    const form = dnsLookupTool.querySelector("[data-dns-lookup-form]");
+    const error = dnsLookupTool.querySelector("[data-dns-lookup-error]");
+    const submit = dnsLookupTool.querySelector("[data-dns-lookup-submit]");
+    const title = dnsLookupTool.querySelector("[data-dns-lookup-title]");
+    const empty = dnsLookupTool.querySelector("[data-dns-lookup-empty]");
+    const output = dnsLookupTool.querySelector("[data-dns-lookup-output]");
+    const copy = dnsLookupTool.querySelector("[data-copy-dns-lookup]");
+    const summary = Object.fromEntries([...dnsLookupTool.querySelectorAll("[data-dns-summary]")].map((element) => [element.dataset.dnsSummary, element]));
+    let copyText = "";
+
+    const section = (heading, records) => {
+      const wrapper = document.createElement("section");
+      wrapper.className = "dns-response-section";
+      const sectionTitle = document.createElement("h3");
+      sectionTitle.textContent = `${heading} (${records.length})`;
+      wrapper.append(sectionTitle);
+      if (!records.length) {
+        const message = document.createElement("p");
+        message.className = "dns-response-empty";
+        message.textContent = `No ${heading.toLowerCase()} records were returned.`;
+        wrapper.append(message);
+        return wrapper;
+      }
+      const tableWrap = document.createElement("div");
+      tableWrap.className = "table-wrap";
+      const table = document.createElement("table");
+      table.className = "dns-response-table";
+      table.innerHTML = "<thead><tr><th>Name</th><th>TTL</th><th>Type</th><th>Value</th></tr></thead>";
+      const body = document.createElement("tbody");
+      records.forEach((record) => {
+        const row = document.createElement("tr");
+        [record.name, record.ttl.toLocaleString("en-GB"), record.type, record.data].forEach((value) => { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
+        body.append(row);
+      });
+      table.append(body); tableWrap.append(table); wrapper.append(tableWrap);
+      return wrapper;
+    };
+
+    const textResults = (result) => {
+      const lines = [`; status: ${result.status}`, `; query: ${result.query.name} ${result.query.type}`, `; dnssec: ${result.dnssec ? "validated" : "not validated"}`, ""];
+      [["ANSWER", result.answers], ["AUTHORITY", result.authority]].forEach(([heading, records]) => {
+        lines.push(`;; ${heading} SECTION:`);
+        if (!records.length) lines.push("; no records");
+        records.forEach((record) => lines.push(`${record.name}\t${record.ttl}\tIN\t${record.type}\t${record.data}`));
+        lines.push("");
+      });
+      return lines.join("\n");
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const name = form.elements.name.value.trim();
+      if (!name) { error.textContent = "Enter a domain name or IP address."; error.hidden = false; form.elements.name.focus(); return; }
+      error.hidden = true; submit.disabled = true; submit.textContent = "Querying…"; title.textContent = "Querying…"; summary.status.textContent = "In progress"; summary.dnssec.textContent = "—"; summary.duration.textContent = "—";
+      const started = performance.now();
+      try {
+        const url = new URL(dnsLookupTool.dataset.apiEndpoint);
+        url.searchParams.set("name", name); url.searchParams.set("type", form.elements.type.value);
+        const response = await fetch(url, { headers: { Accept: "application/json" } });
+        const result = await response.json().catch(() => null);
+        if (!result || typeof result.status !== "string") throw new Error("The DNS service returned an unexpected response.");
+        if (!response.ok) throw new Error(result.message || "The DNS query could not be completed.");
+        form.elements.name.value = result.query.input;
+        title.textContent = `${result.query.name} ${result.query.type}`;
+        summary.status.textContent = result.status;
+        summary.dnssec.textContent = result.dnssec ? "Validated" : "Not validated";
+        summary.duration.textContent = `${Math.round(performance.now() - started)} ms`;
+        output.replaceChildren(section("Answer", result.answers), section("Authority", result.authority));
+        empty.hidden = true; output.hidden = false; copy.hidden = false; copyText = textResults(result);
+      } catch (problem) {
+        title.textContent = "Lookup unavailable"; summary.status.textContent = "Error"; summary.duration.textContent = `${Math.round(performance.now() - started)} ms`;
+        error.textContent = problem instanceof TypeError ? "The DNS lookup service could not be reached. Please try again shortly." : problem.message; error.hidden = false;
+      } finally { submit.disabled = false; submit.textContent = "Run lookup"; }
+    });
+
+    copy.addEventListener("click", async (event) => {
+      try { await navigator.clipboard.writeText(copyText); event.currentTarget.textContent = "Copied"; window.setTimeout(() => { event.currentTarget.textContent = "Copy results"; }, 1600); } catch { event.currentTarget.textContent = "Copy unavailable"; }
+    });
+  }
 })();

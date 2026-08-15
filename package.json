@@ -8,8 +8,9 @@
     "dev": "eleventy --serve",
     "build": "node .eleventy/clean.mjs && eleventy",
     "check:links": "node .eleventy/check-internal-links.mjs",
-    "test": "node --test workers/mac-lookup/test/*.test.js",
+    "test": "node --test workers/*/test/*.test.js",
     "deploy:mac-lookup": "wrangler deploy --config workers/mac-lookup/wrangler.jsonc",
+    "deploy:dns-lookup": "wrangler deploy --config workers/dns-lookup/wrangler.jsonc",
     "debug": "DEBUG=Eleventy* eleventy"
   },
   "devDependencies": {
