@@ -23,7 +23,7 @@ The project now combines a responsive web dashboard, a local Python collector an
 The aim remains practical: show battery, charging and vehicle status clearly, keep credentials on the server, and make missing or stale information visible.
 
 <figure class="post-figure post-figure--wide">
-  <img src="/images/posts/enyaq-pulse/dashboard-overview.jpg" width="1280" height="720" alt="Earlier Enyaq Pulse prototype with demonstration battery and charging values" decoding="async">
+  <img src="../../images/posts/enyaq-pulse/dashboard-overview.jpg" width="1280" height="720" alt="Earlier Enyaq Pulse prototype with demonstration battery and charging values" decoding="async">
   <figcaption>Earlier demonstration interface. Some panels shown in these August screenshots were removed when the project moved to the official API.</figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ The deployed history chart uses the latest reading for each Europe/London calend
 Vehicle capture time and collector polling time are also different. A successful request can return older vehicle information, so freshness labels remain an important part of the screen.
 
 <figure class="post-figure post-figure--wide">
-  <img src="/images/posts/enyaq-pulse/dashboard-analytics.jpg" width="1280" height="720" alt="Earlier demonstration analytics screen with prototype battery, distance and consumption panels" loading="lazy" decoding="async">
+  <img src="../../images/posts/enyaq-pulse/dashboard-analytics.jpg" width="1280" height="720" alt="Earlier demonstration analytics screen with prototype battery, distance and consumption panels" loading="lazy" decoding="async">
   <figcaption>Historical prototype screenshot. Battery history continues in the current build; the trip and consumption panels shown here are not supplied by the official API integration.</figcaption>
 </figure>
 

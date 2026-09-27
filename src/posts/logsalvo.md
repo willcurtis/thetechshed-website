@@ -18,7 +18,7 @@ LogSalvo began as a Python syslog traffic studio with a desktop interface and co
 
 The Mac app now has working Send and Receive workspaces, saved sender profiles, native settings and system, light and dark appearances. Its dedicated Traffic Pulse icon and “Syslog Traffic Studio” identity run through the application and packaging.
 
-[Explore the native Mac workspace](/projects/logsalvo-swift/index.html).
+[Explore the native Mac workspace](../../projects/logsalvo-swift/index.html).
 
 ## Testing both ends of the pipeline
 
