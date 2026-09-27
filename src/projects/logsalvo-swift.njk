@@ -8,15 +8,15 @@ permalink: /projects/logsalvo-swift/index.html
   <section class="logsalvo-hero">
     <div class="container logsalvo-hero-grid">
       <div class="logsalvo-hero-copy">
-        <p class="eyebrow">Native macOS · SwiftUI · Development preview</p>
+        <p class="eyebrow">Native macOS · SwiftUI · Beta validation</p>
         <h1>Syslog traffic,<br><span>under control.</span></h1>
-        <p class="logsalvo-lede">LogSalvo is becoming a native Mac workspace for generating, receiving, inspecting and forwarding syslog traffic—built for engineers who need to see exactly what crossed the wire.</p>
+        <p class="logsalvo-lede">LogSalvo is a native Mac workspace for generating, receiving, inspecting and forwarding syslog traffic—built for engineers who need to see exactly what crossed the wire.</p>
         <div class="actions">
           <a class="button" href="#product">Explore the product</a>
           <a class="button secondary" href="https://github.com/willcurtis/logsalvo" target="_blank" rel="noopener noreferrer">View the original project <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="logsalvo-facts" aria-label="Project facts">
-          <li><strong>0.4.0</strong><span>development release</span></li>
+          <li><strong>0.4.0</strong><span>TestFlight build 3 submitted</span></li>
           <li><strong>macOS</strong><span>native SwiftUI app</span></li>
           <li><strong>Local first</strong><span>no cloud account</span></li>
         </ul>
@@ -76,7 +76,7 @@ permalink: /projects/logsalvo-swift/index.html
         <p>The Swift migration separates protocol handling, transport, receiving and privileged operations into focused modules. The interface is built in SwiftUI, supports system, light and dark appearances, and uses accessibility-aware native controls.</p>
         <div class="logsalvo-assurance">
           <h3>Privileged ports without a privileged app</h3>
-          <p>Listening on ports 1–1023 uses an authenticated LaunchDaemon helper with a narrow XPC boundary. The main LogSalvo interface continues to run as the signed-in user.</p>
+          <p>The direct-download build includes an administrator-approved LaunchDaemon helper path for ports 1–1023, with production validation still outstanding. The sandboxed TestFlight build omits this helper and currently uses listener ports 1024–65535. Sending to a remote port 514 does not require a privileged local listener.</p>
         </div>
         <div class="logsalvo-modules" aria-label="LogSalvo Swift package architecture">
           <span>Core</span><span>Transport</span><span>Receiver</span><span>Privileged</span><span>CLI</span><span>Mac</span>
@@ -87,11 +87,11 @@ permalink: /projects/logsalvo-swift/index.html
 
   <section class="section logsalvo-status" aria-labelledby="status-heading">
     <div class="container logsalvo-status-inner">
-      <div><p class="eyebrow">Project status</p><h2 id="status-heading">A working preview, with more migration ahead.</h2></div>
+      <div><p class="eyebrow">Project status</p><h2 id="status-heading">TestFlight submitted. Release validation continues.</h2></div>
       <div>
-        <p>Version 0.4.0 is a development release for Apple silicon, with the core sender, receiver, forwarding, notification and settings workflows in place. Production signing, notarisation and final interface parity are still on the roadmap.</p>
-        <p>The original Python edition remains the cross-platform reference while the native macOS app develops alongside it.</p>
-        <a class="text-link" href="../../blog/logsalvo/index.html">Read about the original LogSalvo →</a>
+        <p>Updated 27 September 2026: version 0.4.0 has working sender, receiver, forwarding, notification and settings workflows. Build 3 passed Apple upload validation and was submitted for TestFlight beta review on 24 September; the last recorded state was “Waiting for Review”. Installation and functional checks through TestFlight remain open.</p>
+        <p>The direct-download signing and notarisation workflow is prepared, but a validated notarised release, signed-helper testing, Intel validation and final interface parity remain release gates. The original Python edition remains the cross-platform reference.</p>
+        <a class="text-link" href="../../blog/logsalvo/index.html">Read the LogSalvo project update →</a>
       </div>
     </div>
   </section>
